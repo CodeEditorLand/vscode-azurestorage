@@ -1,27 +1,7 @@
 {
 	"name": "vscode-azurestorage",
 	"displayName": "Azure Storage",
-	"version": "0.0.1",
-	"private": false,
 	"description": "Manage your Azure Storage accounts including Blob Containers, File Shares, Tables and Queues",
-	"keywords": [
-		"land"
-	],
-	"homepage": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureStorage#readme",
-	"bugs": {
-		"url": "HTTPS://GitHub.Com/CodeEditorLand/LandAzureStorage/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+HTTPS://github.com/CodeEditorLand/LandAzureStorage.git"
-	},
-	"license": "SEE LICENSE IN LICENSE",
-	"author": {
-		"name": "🛬 Land —",
-		"email": "Land@PlayForm.Cloud",
-		"url": "HTTPS://Land.PlayForm.Cloud"
-	},
-	"type": "module",
 	"main": "main",
 	"browser": "./dist/web/extension.bundle.js",
 	"scripts": {
@@ -835,7 +815,6 @@
 	},
 	"devDependencies": {
 		"@playform/build": "0.0.7",
-		"@playform/document": "0.0.6",
 		"@types/fs-extra": "11.0.4",
 		"@types/jsdom": "21.1.6",
 		"@types/mime": "3.0.4",
@@ -846,9 +825,6 @@
 	"extensionDependencies": [
 		"ms-azuretools.vscode-azureresourcegroups"
 	],
-	"publishConfig": {
-		"access": "public"
-	},
 	"icon": "resources/storageAccount.png",
 	"galleryBanner": {
 		"color": "#0072c6",
