@@ -804,7 +804,7 @@
 		"onView:azureWorkspace"
 	],
 	"dependencies": {
-		"glob": "10.3.16",
+		"glob": "10.4.1",
 		"jsdom": "24.0.0",
 		"mime": "4.0.3",
 		"open": "10.1.0",
