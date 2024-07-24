@@ -764,7 +764,7 @@
 	],
 	"dependencies": {
 		"glob": "11.0.0",
-		"jsdom": "24.1.0",
+		"jsdom": "24.1.1",
 		"mime": "4.0.4",
 		"open": "10.1.0",
 		"p-retry": "6.2.0",
@@ -774,7 +774,7 @@
 		"@types/fs-extra": "11.0.4",
 		"@types/jsdom": "21.1.7",
 		"@types/mime": "3.0.4",
-		"@types/node": "20.14.11",
+		"@types/node": "20.14.12",
 		"@types/p-retry": "3.0.1",
 		"@types/winreg": "1.2.36"
 	},
