@@ -30,7 +30,7 @@ additional information about the extension.**
 -   Open in Storage Explorer for memory or computationally heavy tasks, or for
     Page and Append Blob support.
 
-## Installation
+## 🚀 Installation
 
 1. Download and install the
    [Azure Storage extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurestorage)
