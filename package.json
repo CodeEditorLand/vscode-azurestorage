@@ -756,21 +756,21 @@
 		}
 	},
 	"dependencies": {
-		"glob": "^7.1.2",
-		"jsdom": "^21.1.1",
-		"mime": "^2.4.4",
-		"open": "^8.0.4",
-		"p-retry": "^4.2.0",
-		"winreg": "^1.2.3"
+		"glob": "11.0.0",
+		"jsdom": "25.0.1",
+		"mime": "4.0.4",
+		"open": "10.1.0",
+		"p-retry": "6.2.0",
+		"winreg": "1.2.5"
 	},
 	"description": "Manage your Azure Storage accounts including Blob Containers, File Shares, Tables and Queues",
 	"devDependencies": {
-		"@types/fs-extra": "^8.1.0",
-		"@types/jsdom": "^21.1.1",
-		"@types/mime": "^2.0.1",
-		"@types/node": "^16.0.0",
-		"@types/p-retry": "^3.0.1",
-		"@types/winreg": "1.2.30"
+		"@types/fs-extra": "11.0.4",
+		"@types/jsdom": "21.1.7",
+		"@types/mime": "4.0.0",
+		"@types/node": "22.6.0",
+		"@types/p-retry": "3.0.1",
+		"@types/winreg": "1.2.36"
 	},
 	"displayName": "Azure Storage",
 	"extensionDependencies": [
