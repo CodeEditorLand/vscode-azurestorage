@@ -426,13 +426,13 @@ export class AzureStorageFS
 			`^${this.regexEscape(tiParsedUri.filePath)}\/?([^\/^]+)\/?(.*?)$`,
 		);
 		while (matches) {
-			treeItem = <BlobDirectoryTreeItem>(
-				await treeItem.createChild(<IBlobContainerCreateChildContext>{
-					...context,
-					childType: "azureBlobDirectory",
-					childName: matches[1],
-				})
-			);
+			treeItem = <BlobDirectoryTreeItem>await treeItem.createChild(<
+				IBlobContainerCreateChildContext
+			>{
+				...context,
+				childType: "azureBlobDirectory",
+				childName: matches[1],
+			});
 			matches = matches[2].match("^([^/]+)/?(.*?)$");
 		}
 	}
