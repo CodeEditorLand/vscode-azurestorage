@@ -74,12 +74,10 @@ export class FileShareGroupTreeItem
 		const shareServiceClient: ShareServiceClient =
 			await this.root.createShareServiceClient();
 		const response: AsyncIterableIterator<ServiceListSharesSegmentResponse> =
-			shareServiceClient
-				.listShares()
-				.byPage({
-					continuationToken: this._continuationToken,
-					maxPageSize,
-				});
+			shareServiceClient.listShares().byPage({
+				continuationToken: this._continuationToken,
+				maxPageSize,
+			});
 
 		let responseValue: ServiceListSharesSegmentResponse;
 		try {
