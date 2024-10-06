@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as os from "os";
-
 import { IStorageExplorerLauncher } from "./IStorageExplorerLauncher";
 import { MacOSStorageExplorerLauncher } from "./macOSStorageExplorerLauncher";
 import { WindowsStorageExplorerLauncher } from "./windowsStorageExplorerLauncher";
@@ -12,10 +11,10 @@ import { WindowsStorageExplorerLauncher } from "./windowsStorageExplorerLauncher
 let storageExplorerLauncher: IStorageExplorerLauncher;
 
 if (os.platform() === "win32") {
-	storageExplorerLauncher = new WindowsStorageExplorerLauncher();
+    storageExplorerLauncher = new WindowsStorageExplorerLauncher();
 } else {
-	// assume Mac Os for now.
-	storageExplorerLauncher = new MacOSStorageExplorerLauncher();
+    // assume Mac Os for now.
+    storageExplorerLauncher = new MacOSStorageExplorerLauncher();
 }
 
 export { storageExplorerLauncher };

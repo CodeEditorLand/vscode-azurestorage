@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-"use strict";
+'use strict';
 
 export interface ICopyUrl {
-	getUrl?(): string;
-	copyUrl(): void;
+    getUrl?(): string;
+    copyUrl(): void;
 }

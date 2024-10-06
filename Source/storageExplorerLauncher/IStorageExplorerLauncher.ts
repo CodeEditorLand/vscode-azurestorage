@@ -6,10 +6,5 @@
 import { ResourceType } from "./ResourceType";
 
 export interface IStorageExplorerLauncher {
-	openResource(
-		accountId: string,
-		subscriptionid: string,
-		resourceType?: ResourceType,
-		resourceName?: string,
-	): Promise<void>;
+    openResource(accountId: string, subscriptionid: string, resourceType?: ResourceType, resourceName?: string): Promise<void>;
 }

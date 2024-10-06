@@ -6,5 +6,5 @@
 import { IParsedError } from "@microsoft/vscode-azext-utils";
 
 export interface IAzCopyResolution {
-	errors: IParsedError[];
+    errors: IParsedError[];
 }
