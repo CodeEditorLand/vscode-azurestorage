@@ -6,5 +6,5 @@
 import { IStorageRoot } from "./IStorageRoot";
 
 export interface IStorageTreeItem {
-    root: IStorageRoot;
+	root: IStorageRoot;
 }
