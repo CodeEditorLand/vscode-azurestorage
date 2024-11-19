@@ -760,7 +760,7 @@
 		"jsdom": "25.0.1",
 		"mime": "4.0.4",
 		"open": "10.1.0",
-		"p-retry": "6.2.0",
+		"p-retry": "6.2.1",
 		"winreg": "1.2.5"
 	},
 	"description": "Manage your Azure Storage accounts including Blob Containers, File Shares, Tables and Queues",
