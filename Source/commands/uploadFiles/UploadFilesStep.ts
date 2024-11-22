@@ -45,16 +45,20 @@ export class UploadFilesStep extends AzureWizardExecuteStep<IUploadFilesWizardCo
 		notificationProgress: NotificationProgress,
 	): Promise<void> {
 		let urisToUpload: Uri[] = [];
+
 		const fileEndings: string[] = [];
+
 		if (!context.calledFromUploadToAzureStorage) {
 			const overwriteChoice: { choice: OverwriteChoice | undefined } = {
 				choice: undefined,
 			};
+
 			for (const uri of context.uris) {
 				const destPath: string = convertLocalPathToRemotePath(
 					uri.fsPath,
 					context.destinationDirectory,
 				);
+
 				if (
 					!(await AzExtFsExtra.isDirectory(uri)) &&
 					(await checkCanUpload(
@@ -76,6 +80,7 @@ export class UploadFilesStep extends AzureWizardExecuteStep<IUploadFilesWizardCo
 		if (!urisToUpload.length) {
 			// No URIs to upload and no errors to report
 			context.resolution = { errors: [] };
+
 			return;
 		}
 
@@ -91,6 +96,7 @@ export class UploadFilesStep extends AzureWizardExecuteStep<IUploadFilesWizardCo
 			);
 		} else {
 			const title: string = getUploadingMessage(context.treeItem.label);
+
 			const resolution: IAzCopyResolution = await window.withProgress(
 				{
 					cancellable: true,
@@ -136,7 +142,9 @@ async function uploadFilesStepHelper(
 	calledFromUploadToAzureStorage: boolean,
 ): Promise<IAzCopyResolution> {
 	ext.lastUriUpload = uris[0];
+
 	const resolution: IAzCopyResolution = { errors: [] };
+
 	for (const uri of uris) {
 		throwIfCanceled(
 			cancellationToken,
@@ -145,10 +153,12 @@ async function uploadFilesStepHelper(
 		);
 
 		const localFilePath: string = uri.fsPath;
+
 		const remoteFilePath: string = convertLocalPathToRemotePath(
 			localFilePath,
 			destinationDirectory,
 		);
+
 		try {
 			await treeItem.uploadLocalFile(
 				context,
@@ -159,6 +169,7 @@ async function uploadFilesStepHelper(
 			);
 		} catch (error) {
 			const parsedError: IParsedError = parseError(error);
+
 			if (isAzCopyError(parsedError)) {
 				resolution.errors.push(parsedError);
 			} else {

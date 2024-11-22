@@ -69,6 +69,7 @@ export class BlobDirectoryTreeItem
 		public readonly resourceUri: string,
 	) {
 		super(parent);
+
 		if (!dirPath.endsWith(path.posix.sep)) {
 			dirPath += path.posix.sep;
 		}
@@ -100,6 +101,7 @@ export class BlobDirectoryTreeItem
 			services: "b", // blob
 			resourceTypes: "co", // container, object
 		};
+
 		return this.root.generateSasToken(accountSASSignatureValues);
 	}
 
@@ -119,6 +121,7 @@ export class BlobDirectoryTreeItem
 			this._continuationToken,
 		);
 		this._continuationToken = continuationToken;
+
 		return children;
 	}
 
@@ -126,6 +129,7 @@ export class BlobDirectoryTreeItem
 		context: ICreateChildImplContext & IBlobContainerCreateChildContext,
 	): Promise<AzExtTreeItem> {
 		let child: AzExtTreeItem;
+
 		if (context.childType === BlobTreeItem.contextValue) {
 			child = await createChildAsNewBlockBlob(this, context);
 		} else {
@@ -137,6 +141,7 @@ export class BlobDirectoryTreeItem
 			);
 		}
 		AzureStorageFS.fireCreateEvent(child);
+
 		return child;
 	}
 
@@ -146,6 +151,7 @@ export class BlobDirectoryTreeItem
 			this.container.name,
 			this.dirPath,
 		);
+
 		const url = blobClient.url;
 		await copyAndShowToast(url, "Blob Directory URL");
 	}
@@ -158,6 +164,7 @@ export class BlobDirectoryTreeItem
 			'Delete directory "{0}"',
 			this.dirName,
 		);
+
 		const wizardContext: IDeleteBlobDirectoryWizardContext = Object.assign(
 			context,
 			{
@@ -173,6 +180,7 @@ export class BlobDirectoryTreeItem
 			"Are you sure you want to delete the blob directory '{0}' and all its contents?",
 			this.dirName,
 		);
+
 		const wizard = new AzureWizard(wizardContext, {
 			promptSteps: [new DeleteConfirmationStep(message)],
 			executeSteps: [new DeleteBlobDirectoryStep()],

@@ -63,10 +63,12 @@ export class TableGroupTreeItem
 		}
 
 		let tablesResponse: TableItemResultPage;
+
 		try {
 			tablesResponse = await this.listTables(this._continuationToken);
 		} catch (error) {
 			const errorType: string = parseError(error).errorType;
+
 			if (errorType === "NotImplemented") {
 				throw new Error(
 					localize(
@@ -103,6 +105,7 @@ export class TableGroupTreeItem
 
 	async listTables(continuationToken?: string): Promise<TableItemResultPage> {
 		const tableServiceClient = await this.root.createTableServiceClient();
+
 		const response: AsyncIterableIterator<TableItemResultPage> =
 			tableServiceClient
 				.listTables()
@@ -122,6 +125,7 @@ export class TableGroupTreeItem
 
 		if (tableName) {
 			const currentChildren = await this.getCachedChildren(context);
+
 			if (currentChildren.some((child) => child.label === tableName)) {
 				throw new Error(
 					localize(
@@ -138,7 +142,9 @@ export class TableGroupTreeItem
 					progress.report({
 						message: `Azure Storage: Creating table '${tableName}'`,
 					});
+
 					const table = await this.createTable(tableName);
+
 					return new TableTreeItem(this, nonNullProp(table, "name"));
 				},
 			);
@@ -156,10 +162,13 @@ export class TableGroupTreeItem
 		await tableServiceClient.createTable(name);
 
 		const tablesResponse = await this.listTables();
+
 		let createdTable: TableItem | undefined;
+
 		for (const table of tablesResponse) {
 			if (table.name === name) {
 				createdTable = table;
+
 				break;
 			}
 		}

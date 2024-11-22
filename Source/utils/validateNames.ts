@@ -17,6 +17,7 @@ const invalidFileAndDirectoryChars = [
 	"?",
 	"*",
 ];
+
 const invalidFileAndDirectoryCharsString =
 	invalidFileAndDirectoryChars.join(", ");
 
@@ -65,6 +66,7 @@ export function validateDocumentPath(
 	documentType: DocumentType,
 ): undefined | string {
 	const minLengthDocumentPath = 3;
+
 	const maxLengthDocumentPath = 255;
 
 	if (documentType === DocumentType.index && documentPath.includes("/")) {

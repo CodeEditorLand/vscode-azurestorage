@@ -38,11 +38,14 @@ export class UploadFolderStep extends AzureWizardExecuteStep<IUploadFolderWizard
 		notificationProgress: NotificationProgress,
 	): Promise<void> {
 		const sourcePath: string = context.uri.fsPath;
+
 		const destPath: string = convertLocalPathToRemotePath(
 			sourcePath,
 			context.destinationDirectory,
 		);
+
 		const resolution: IAzCopyResolution = { errors: [] };
+
 		if (
 			!context.calledFromUploadToAzureStorage &&
 			!(await checkCanUpload(
@@ -54,6 +57,7 @@ export class UploadFolderStep extends AzureWizardExecuteStep<IUploadFolderWizard
 		) {
 			// Don't upload this folder
 			context.resolution = resolution;
+
 			return;
 		}
 
@@ -94,6 +98,7 @@ export class UploadFolderStep extends AzureWizardExecuteStep<IUploadFolderWizard
 			}
 		} catch (error) {
 			const parsedError: IParsedError = parseError(error);
+
 			if (
 				context.calledFromUploadToAzureStorage &&
 				isAzCopyError(parsedError)

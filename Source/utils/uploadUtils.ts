@@ -90,15 +90,18 @@ export function outputAndCopyUploadedFileUrls(
 		"copyToClipboard",
 		"Copy to Clipboard",
 	);
+
 	const outputAndCopyFile: string = localize(
 		"outputAndCopyFinished.file",
 		"Finished uploading 1 file.",
 	);
+
 	const outputAndCopyFiles: string = localize(
 		"outputAndCopyFinished.files",
 		"Finished uploading {0} files.",
 		fileUrls.length,
 	);
+
 	const viewOutput: string = localize("viewOutput", "View Output");
 
 	if (fileUrls.length === 1) {
@@ -106,6 +109,7 @@ export function outputAndCopyUploadedFileUrls(
 			.showInformationMessage(outputAndCopyFile, copyToClipboard)
 			.then(async (result) => {
 				const shouldCopy: boolean = !!result;
+
 				if (shouldCopy) {
 					const lastFileUrl: string = `${parentUrl}/${fileUrls[fileUrls.length - 1]}`;
 					await copyAndShowToast(lastFileUrl, "File URL");
@@ -116,6 +120,7 @@ export function outputAndCopyUploadedFileUrls(
 			.showInformationMessage(outputAndCopyFiles, viewOutput)
 			.then((result) => {
 				const shouldView: boolean = !!result;
+
 				if (shouldView) {
 					ext.outputChannel.show();
 				}
@@ -173,6 +178,7 @@ export function convertLocalPathToRemotePath(
 	destinationDirectory: string,
 ): string {
 	let path: string = posix.join(destinationDirectory, basename(localPath));
+
 	if (path.startsWith(posix.sep)) {
 		// `BlobClient` and `ShareFileClient` treat resource paths that start with "/" differently from those that don't. So remove the leading "/".
 		// This check is done after `posix.join()` because that function removes any duplicate slashes from the beginning of the path.

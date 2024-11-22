@@ -18,6 +18,7 @@ export class GetFileDestinationDirectoryStep extends AzureWizardPromptStep<IUplo
 			context,
 			context.destinationDirectory,
 		);
+
 		if (context.uris === undefined) {
 			context.uris = await context.ui.showOpenDialog({
 				canSelectFiles: true,

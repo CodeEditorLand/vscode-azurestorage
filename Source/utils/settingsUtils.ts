@@ -34,5 +34,6 @@ export function getWorkspaceSetting<T>(
 			prefix,
 			fsPath ? Uri.file(fsPath) : undefined,
 		);
+
 	return projectConfiguration.get<T>(key);
 }

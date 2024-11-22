@@ -9,6 +9,7 @@ import { Uri, workspace } from "vscode";
 
 export function isPathEqual(fsPath1: string, fsPath2: string): boolean {
 	const relativePath: string = path.relative(fsPath1, fsPath2);
+
 	return relativePath === "";
 }
 
@@ -17,6 +18,7 @@ export function isSubpath(
 	expectedChild: string,
 ): boolean {
 	const relativePath: string = path.relative(expectedParent, expectedChild);
+
 	return (
 		relativePath !== "" &&
 		!relativePath.startsWith("..") &&
@@ -32,6 +34,7 @@ export async function isEmptyDirectory(
 	}
 
 	const files = await workspace.fs.readDirectory(pathOrUri);
+
 	if (files.length === 0) {
 		return true;
 	}

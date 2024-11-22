@@ -28,6 +28,7 @@ export function createAzCopyRemoteLocation(
 
 	// Ensure path begins with '/' to transfer properly
 	path = path[0] === posix.sep ? path : `${posix.sep}${path}`;
+
 	return {
 		type: "RemoteSas",
 		sasToken,

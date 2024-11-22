@@ -11,7 +11,9 @@ export function getPropertyFromConnectionString(
 		`(?:^|;)\\s*${property}=([^;]+)(?:;|$)`,
 		"i",
 	);
+
 	const match: RegExpMatchArray | undefined =
 		connectionString.match(regexp) || undefined;
+
 	return match && match[1];
 }

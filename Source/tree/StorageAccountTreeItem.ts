@@ -122,6 +122,7 @@ export class StorageAccountTreeItem
 		);
 		// make sure key is initialized
 		await ti.refreshKey();
+
 		return ti;
 	}
 
@@ -153,6 +154,7 @@ export class StorageAccountTreeItem
 		);
 
 		const primaryEndpoints = this.storageAccount.primaryEndpoints;
+
 		const groupTreeItems: AzExtTreeItem[] = [];
 
 		if (primaryEndpoints.blob) {
@@ -180,6 +182,7 @@ export class StorageAccountTreeItem
 
 	async refreshKey(): Promise<void> {
 		const keys: StorageAccountKeyWrapper[] = await this.getKeys();
+
 		const primaryKey = keys.find((key) => {
 			return key.keyName === "key1" || key.keyName === "primaryKey";
 		});
@@ -197,6 +200,7 @@ export class StorageAccountTreeItem
 			'Delete storage account "{0}"',
 			this.label,
 		);
+
 		const wizardContext: DeleteStorageAccountWizardContext = Object.assign(
 			context,
 			{
@@ -208,6 +212,7 @@ export class StorageAccountTreeItem
 		);
 
 		const message: string = `Are you sure you want to delete account "${this.label}" and all its contents?`;
+
 		const wizard = new AzureWizard(wizardContext, {
 			promptSteps: [new DeleteConfirmationStep(message)],
 			executeSteps: [new DeleteStorageAccountStep()],
@@ -239,10 +244,12 @@ export class StorageAccountTreeItem
 					this.storageAccount.name,
 					this.key.value,
 				);
+
 				let client = new BlobServiceClient(
 					nonNullProp(this.storageAccount.primaryEndpoints, "blob"),
 					credential,
 				);
+
 				try {
 					await client.getProperties(); // Trigger a request to validate the key
 				} catch (error) {
@@ -267,10 +274,12 @@ export class StorageAccountTreeItem
 					this.storageAccount.name,
 					this.key.value,
 				);
+
 				let client = new ShareServiceClient(
 					nonNullProp(this.storageAccount.primaryEndpoints, "file"),
 					credential,
 				);
+
 				try {
 					await client.getProperties(); // Trigger a request to validate the key
 				} catch (error) {
@@ -296,10 +305,12 @@ export class StorageAccountTreeItem
 					this.storageAccount.name,
 					this.key.value,
 				);
+
 				let client = new QueueServiceClient(
 					nonNullProp(this.storageAccount.primaryEndpoints, "queue"),
 					credential,
 				);
+
 				try {
 					await client.getProperties(); // Trigger a request to validate the key
 				} catch (error) {
@@ -324,10 +335,12 @@ export class StorageAccountTreeItem
 					this.storageAccount.name,
 					this.key.value,
 				);
+
 				let client = new TableServiceClient(
 					nonNullProp(this.storageAccount.primaryEndpoints, "table"),
 					credential,
 				);
+
 				try {
 					await client.getProperties(); // Trigger a request to validate the key
 				} catch (error) {
@@ -358,12 +371,15 @@ export class StorageAccountTreeItem
 		const parsedId = StorageAccountTreeItem.parseAzureResourceId(
 			this.storageAccount.id,
 		);
+
 		const resourceGroupName = parsedId.resourceGroups;
+
 		const keyResult =
 			await this.storageManagementClient.storageAccounts.listKeys(
 				resourceGroupName,
 				this.storageAccount.name,
 			);
+
 		return (keyResult.keys || <StorageAccountKey[]>[]).map(
 			(key) => new StorageAccountKeyWrapper(key),
 		);
@@ -373,6 +389,7 @@ export class StorageAccountTreeItem
 		[key: string]: string;
 	} {
 		const invalidIdErr = new Error("Invalid Account ID.");
+
 		const result = {};
 
 		if (
@@ -391,6 +408,7 @@ export class StorageAccountTreeItem
 
 		for (let i = 0; i < parts.length; i += 2) {
 			const key = parts[i];
+
 			const value = parts[i + 1];
 
 			if (key === "" || value === "") {
@@ -415,10 +433,13 @@ export class StorageAccountTreeItem
 		// Currently only the child with the name "$web" is supported for hosting websites
 		// Ensure that the children are loaded
 		await this._blobContainerGroupTreeItem.getCachedChildren(context);
+
 		const id = `${this._blobContainerGroupTreeItem.fullId || this._blobContainerGroupTreeItem.label}/${staticWebsiteContainerName}`;
+
 		const containerTreeItem = <BlobContainerTreeItem>(
 			await ext.rgApi.appResourceTree.findTreeItem(id, context)
 		);
+
 		return containerTreeItem;
 	}
 
@@ -432,8 +453,10 @@ export class StorageAccountTreeItem
 		// Does NOT update treeItem's _webHostingEnabled.
 		const serviceClient: BlobServiceClient =
 			await this.root.createBlobServiceClient();
+
 		const properties: ServiceGetPropertiesResponse =
 			await serviceClient.getProperties();
+
 		const staticWebsite: StaticWebsite | undefined =
 			properties.staticWebsite;
 
@@ -457,6 +480,7 @@ export class StorageAccountTreeItem
 	private async getAccountType(): Promise<AccountKind> {
 		const serviceClient: BlobServiceClient =
 			await this.root.createBlobServiceClient();
+
 		const accountType: AccountKind | undefined = (
 			await serviceClient.getAccountInfo()
 		).accountKind;
@@ -473,11 +497,13 @@ export class StorageAccountTreeItem
 	): Promise<void> {
 		const oldStatus: WebsiteHostingStatus =
 			await this.getActualWebsiteHostingStatus();
+
 		const wizardContext: IStaticWebsiteConfigWizardContext = Object.assign(
 			<IStaticWebsiteConfigWizardContext>context,
 			this,
 		);
 		wizardContext.enableStaticWebsite = true;
+
 		const wizard: AzureWizard<IStaticWebsiteConfigWizardContext> =
 			new AzureWizard(wizardContext, {
 				promptSteps: [
@@ -506,15 +532,18 @@ export class StorageAccountTreeItem
 			void window.showInformationMessage(
 				`Account '${this.label}' does not currently have static website hosting enabled.`,
 			);
+
 			return;
 		}
 		const disableMessage: MessageItem = { title: "Disable" };
+
 		const confirmDisable: MessageItem = await context.ui.showWarningMessage(
 			`Are you sure you want to disable static web hosting for the account '${this.label}'?`,
 			{ modal: true },
 			disableMessage,
 			DialogResponses.cancel,
 		);
+
 		if (confirmDisable === disableMessage) {
 			const props = { staticWebsite: { enabled: false } };
 			await this.setWebsiteHostingProperties(props);
@@ -539,7 +568,9 @@ export class StorageAccountTreeItem
 		if (!hostingStatus.enabled) {
 			const msg =
 				"Static website hosting is not enabled for this storage account.";
+
 			const result = await window.showErrorMessage(msg, configure);
+
 			if (result === configure) {
 				await commands.executeCommand(
 					"azureStorage.configureStaticWebsite",
@@ -551,7 +582,9 @@ export class StorageAccountTreeItem
 
 		if (!hostingStatus.indexDocument) {
 			const msg = "No index document has been set for this website.";
+
 			const result = await window.showErrorMessage(msg, configure);
+
 			if (result === configure) {
 				await commands.executeCommand(
 					"azureStorage.configureStaticWebsite",
@@ -562,6 +595,7 @@ export class StorageAccountTreeItem
 		}
 
 		const endpoint = this.getPrimaryWebEndpoint();
+
 		if (endpoint) {
 			await openUrl(endpoint);
 		} else {
@@ -578,6 +612,7 @@ export class StorageAccountTreeItem
 		if (!hostingStatus.capable) {
 			// Doesn't support static website hosting. Try to narrow it down.
 			let accountType: AccountKind | undefined;
+
 			try {
 				accountType = await this.getAccountType();
 			} catch (error) {
@@ -585,6 +620,7 @@ export class StorageAccountTreeItem
 			}
 			if (accountType !== "StorageV2") {
 				context.errorHandling.suppressReportIssue = true;
+
 				throw new Error(
 					localize(
 						"onlyGeneralPurposeV2",

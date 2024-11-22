@@ -90,6 +90,7 @@ export async function activate(
 				await apiUtils.getExtensionExports<apiUtils.AzureExtensionApiProvider>(
 					"ms-azuretools.vscode-azureresourcegroups",
 				);
+
 			if (rgApiProvider) {
 				const api =
 					rgApiProvider.getApi<AzureHostExtensionApi>("0.0.1");
@@ -104,6 +105,7 @@ export async function activate(
 						_rootTreeItem: AzExtParentTreeItem;
 					}
 				)._rootTreeItem;
+
 				const storageWorkspaceProvider = new StorageWorkspaceProvider(
 					workspaceRootTreeItem,
 				);

@@ -20,6 +20,7 @@ export class OpenTreeItemStep extends AzureWizardExecuteStep<IOpenInFileExplorer
 	): Promise<void> {
 		const openFolders: readonly WorkspaceFolder[] =
 			workspace.workspaceFolders || [];
+
 		if (
 			context.openBehavior === "AddToWorkspace" &&
 			openFolders.length === 0
@@ -32,12 +33,16 @@ export class OpenTreeItemStep extends AzureWizardExecuteStep<IOpenInFileExplorer
 
 		if (!AzureStorageFS.isAttachedAccount(treeItem)) {
 			const storageAccountId = treeItem.root.storageAccountId;
+
 			const serviceType = "container" in treeItem ? "blob" : "fileShare";
+
 			const containerName =
 				"container" in treeItem
 					? treeItem.container.name
 					: treeItem.shareName;
+
 			let uriByService: Uri;
+
 			if (serviceType === "blob") {
 				uriByService = BlobContainerFS.constructUri(
 					containerName,
@@ -68,6 +73,7 @@ export class OpenTreeItemStep extends AzureWizardExecuteStep<IOpenInFileExplorer
 			const uri = AzureStorageFS.idToUri(
 				nonNullProp(context, "treeItem").fullId,
 			);
+
 			if (context.openBehavior === "AddToWorkspace") {
 				// @todo: Test if this should the BlobContainerFS uri or the original uri
 				workspace.updateWorkspaceFolders(openFolders.length, 0, {

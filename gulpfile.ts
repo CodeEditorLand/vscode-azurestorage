@@ -14,6 +14,7 @@ import * as gulp from "gulp";
 
 async function prepareForWebpack(): Promise<void> {
 	const mainJsPath: string = path.join(__dirname, "main.js");
+
 	let contents: string = fs.readFileSync(mainJsPath).toString();
 	contents = contents
 		.replace("out/src/extension", "dist/extension.bundle")
@@ -23,6 +24,7 @@ async function prepareForWebpack(): Promise<void> {
 
 async function cleanReadme(): Promise<void> {
 	const readmePath: string = path.join(__dirname, "README.md");
+
 	let data: string = fs.readFileSync(readmePath).toString();
 	data = data.replace(
 		/<!-- region exclude-from-marketplace -->.*?<!-- endregion exclude-from-marketplace -->/gis,

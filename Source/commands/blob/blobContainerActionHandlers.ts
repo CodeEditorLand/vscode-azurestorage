@@ -50,9 +50,11 @@ export function registerBlobContainerActionHandlers(): void {
 			const blobPath: string = normalizeBlobPathInput(
 				await getBlobPath(context, parent),
 			);
+
 			const dirNames: string[] = blobPath.includes("/")
 				? path.dirname(blobPath).split("/")
 				: [];
+
 			let dirParentTreeItem:
 				| BlobDirectoryTreeItem
 				| BlobContainerTreeItem = parent;
@@ -66,6 +68,7 @@ export function registerBlobContainerActionHandlers(): void {
 					`${dirParentTreeItem.fullId}/${dirName}`,
 					context,
 				);
+
 				if (!treeItem) {
 					// This directory doesn't exist yet
 					dirParentTreeItem = await dirParentTreeItem.createChild(<
@@ -111,7 +114,9 @@ async function openBlobContainerInStorageExplorer(
 	treeItem: BlobContainerTreeItem,
 ): Promise<void> {
 	const accountId = treeItem.root.storageAccountId;
+
 	const resourceType = "Azure.BlobContainer";
+
 	const resourceName = treeItem.container.name;
 
 	await storageExplorerLauncher.openResource(

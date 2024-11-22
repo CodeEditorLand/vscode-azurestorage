@@ -97,6 +97,7 @@ export function registerCommands(): void {
 
 			const wizardContext: IOpenInFileExplorerWizardContext =
 				Object.assign(actionContext, { treeItem });
+
 			if (treeItem.root.isEmulated) {
 				wizardContext.openBehavior = "OpenInNewWindow";
 			}

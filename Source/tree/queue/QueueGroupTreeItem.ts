@@ -66,10 +66,12 @@ export class QueueGroupTreeItem
 		}
 
 		let queuesResponse: ListQueuesSegmentResponse;
+
 		try {
 			queuesResponse = await this.listQueues(this._continuationToken);
 		} catch (error) {
 			const errorType: string = parseError(error).errorType;
+
 			if (this.root.isEmulated && errorType === "ECONNREFUSED") {
 				return [
 					new GenericTreeItem(this, {
@@ -108,6 +110,7 @@ export class QueueGroupTreeItem
 		continuationToken?: string,
 	): Promise<ListQueuesSegmentResponse> {
 		const queueServiceClient = await this.root.createQueueServiceClient();
+
 		const response: AsyncIterableIterator<ServiceListQueuesSegmentResponse> =
 			queueServiceClient
 				.listQueues()
@@ -127,6 +130,7 @@ export class QueueGroupTreeItem
 
 		if (queueName) {
 			const currentChildren = await this.getCachedChildren(context);
+
 			if (currentChildren.some((child) => child.label === queueName)) {
 				throw new Error(
 					localize(
@@ -143,8 +147,10 @@ export class QueueGroupTreeItem
 					progress.report({
 						message: `Azure Storage: Creating queue '${queueName}'`,
 					});
+
 					const queueCreateResponse =
 						await this.createQueue(queueName);
+
 					return new QueueTreeItem(this, queueCreateResponse);
 				},
 			);
@@ -163,10 +169,13 @@ export class QueueGroupTreeItem
 
 		const queuesResponse: ListQueuesSegmentResponse =
 			await this.listQueues();
+
 		let createdQueue: QueueItem | undefined;
+
 		for (const queue of queuesResponse.queueItems || []) {
 			if (queue.name === name) {
 				createdQueue = queue;
+
 				break;
 			}
 		}

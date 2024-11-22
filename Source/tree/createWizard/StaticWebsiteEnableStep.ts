@@ -24,7 +24,9 @@ export class StaticWebsiteEnableStep extends AzureWizardPromptStep<IStaticWebsit
 				"wouldYouLikeToEnableStaticWebsiteHosting",
 				"Would you like to enable static website hosting?",
 			);
+
 			const yes: QuickPickItem = { label: DialogResponses.yes.title };
+
 			const no: QuickPickItem = { label: DialogResponses.no.title };
 
 			context.enableStaticWebsite =

@@ -92,6 +92,7 @@ export class BlobTreeItem
 			services: "b", // blob
 			resourceTypes: "co", // container, object
 		};
+
 		return this.root.generateSasToken(accountSASSignatureValues);
 	}
 
@@ -102,6 +103,7 @@ export class BlobTreeItem
 			this.container.name,
 			this.blobPath,
 		);
+
 		const url = blobClient.url;
 		await copyAndShowToast(url, "Blob URL");
 	}
@@ -115,6 +117,7 @@ export class BlobTreeItem
 				'Delete blob "{0}"',
 				this.label,
 			);
+
 			const wizardContext: IDeleteBlobWizardContext = Object.assign(
 				context,
 				{
@@ -125,11 +128,13 @@ export class BlobTreeItem
 					activityTitle: deletingBlob,
 				},
 			);
+
 			const message: string = localize(
 				"deleteBlob",
 				"Are you sure you want to delete the blob '{0}'?",
 				this.label,
 			);
+
 			const wizard = new AzureWizard(wizardContext, {
 				promptSteps: [new DeleteConfirmationStep(message)],
 				executeSteps: [new DeleteBlobStep()],
@@ -153,13 +158,16 @@ export class BlobTreeItem
 			this.container.name,
 			this.blobPath,
 		);
+
 		const props: BlobGetPropertiesResponse = await client.getProperties();
 		context.telemetry.measurements.blobDownloadSize = props.contentLength;
+
 		if (
 			props.blobType &&
 			!props.blobType.toLocaleLowerCase().startsWith("block")
 		) {
 			context.telemetry.properties.invalidBlobTypeForDownload = "true";
+
 			const message: string = localize(
 				"pleaseUseSE",
 				'Please use [Storage Explorer]({0}) for blobs of type "{1}".',

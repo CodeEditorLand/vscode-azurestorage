@@ -114,6 +114,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 		const index = attachedAccounts.findIndex(
 			(account) => account.fullId === treeItem.fullId,
 		);
+
 		if (index !== -1) {
 			attachedAccounts.splice(index, 1);
 			await ext.context.secrets.delete(this.getAccountKey(treeItem));
@@ -129,6 +130,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 				this._attachedAccounts = await this._loadPersistedAccountsTask;
 			} catch {
 				this._attachedAccounts = [];
+
 				throw new Error(
 					localize(
 						"failedToLoadPersistedStorageAccounts",
@@ -172,9 +174,11 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 		AttachedStorageAccountTreeItem[]
 	> {
 		const persistedAccounts: AttachedStorageAccountTreeItem[] = [];
+
 		const value: string | undefined = ext.context.globalState.get(
 			this._serviceName,
 		);
+
 		let connectionString: string;
 
 		if (value) {
@@ -188,6 +192,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 							this.getAccountKey(account),
 						)
 					);
+
 					const accountName: string | undefined =
 						getPropertyFromConnectionString(
 							connectionString,
@@ -206,6 +211,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 		persistedAccounts.push(
 			this.createTreeItem(emulatorConnectionString, emulatorAccountName),
 		);
+
 		return persistedAccounts;
 	}
 
@@ -220,6 +226,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 		attachedAccounts: AttachedStorageAccountTreeItem[],
 	): Promise<void> {
 		const value: IPersistedAccount[] = [];
+
 		for (const treeItem of attachedAccounts) {
 			if (treeItem.root.storageAccountName !== emulatorAccountName) {
 				value.push(<IPersistedAccount>{

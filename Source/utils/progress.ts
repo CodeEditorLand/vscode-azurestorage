@@ -18,7 +18,9 @@ export async function awaitWithProgress<T>(
 	getProgress: () => string,
 ): Promise<T> {
 	const uiIntervalMs = 1 * 500;
+
 	const uiUpdatesPerChannelUpdate = 5000 / uiIntervalMs;
+
 	let nextChannelUpdate = uiUpdatesPerChannelUpdate;
 
 	let thisProgress: StatusBarProgress;
@@ -30,6 +32,7 @@ export async function awaitWithProgress<T>(
 		},
 		async (progress: StatusBarProgress): Promise<T> => {
 			thisProgress = progress;
+
 			return promise;
 		},
 	);
@@ -38,6 +41,7 @@ export async function awaitWithProgress<T>(
 		const msg = getProgress();
 
 		nextChannelUpdate -= 1;
+
 		if (nextChannelUpdate <= 0) {
 			nextChannelUpdate = uiUpdatesPerChannelUpdate;
 			ext.outputChannel.appendLog(`${title}: ${msg}`);
@@ -70,6 +74,7 @@ function pollDuringPromise<T>(
 	const pollFunction = () => {
 		if (inProgress) {
 			poll();
+
 			setTimeout(pollFunction, intervalMs);
 		}
 	};

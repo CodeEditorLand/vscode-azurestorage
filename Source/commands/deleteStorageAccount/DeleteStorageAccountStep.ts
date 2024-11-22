@@ -32,13 +32,16 @@ export class DeleteStorageAccountStep extends AzureWizardExecuteStep<DeleteStora
 			'Deleting storage account "{0}"...',
 			storageAccount.name,
 		);
+
 		const storageManagementClient = await createStorageClient([
 			wizardContext,
 			wizardContext.subscription,
 		]);
+
 		const parsedId = StorageAccountTreeItem.parseAzureResourceId(
 			storageAccount.id,
 		);
+
 		const resourceGroupName = parsedId.resourceGroups;
 
 		ext.outputChannel.appendLog(deletingStorageAccount);

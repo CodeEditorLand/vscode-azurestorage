@@ -85,7 +85,9 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 	private getStorageAccountId(uri: vscode.Uri): string | null {
 		const params = new URLSearchParams(uri.query);
+
 		const storageAccountId = params.get("storageAccountId");
+
 		return storageAccountId;
 	}
 
@@ -93,6 +95,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		const match: RegExpMatchArray | null = uri.path.match(
 			/^\/(?<container>[^\/]*)\/?/,
 		);
+
 		return match?.groups ? match.groups.container : "";
 	}
 
@@ -101,6 +104,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			"/" + this.getContainerName(uri),
 			"",
 		);
+
 		return pathWithoutContainer.startsWith("/")
 			? pathWithoutContainer.slice(1)
 			: pathWithoutContainer;
@@ -114,10 +118,13 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		baseName: string;
 	} {
 		const storageAccountId = this.getStorageAccountId(uri);
+
 		const containerName = this.getContainerName(uri);
+
 		const blobPath = this.getBlobPath(uri);
 
 		const parentDirPath = BlobPathUtils.dirname(blobPath);
+
 		const baseName = BlobPathUtils.basename(blobPath);
 
 		const result = {
@@ -127,6 +134,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			parentDirPath,
 			baseName,
 		};
+
 		return result;
 	}
 
@@ -138,17 +146,22 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		context: IActionContext,
 	): Promise<{ storageAccount: StorageAccount; accountKey?: string }> {
 		const { storageAccountId } = this.parseUri(uri);
+
 		const subscriptionId =
 			parseAzureResourceId(storageAccountId).subscriptionId;
+
 		const resourceGroupName =
 			parseAzureResourceId(storageAccountId).resourceGroup;
+
 		const storageAccountName =
 			parseAzureResourceId(storageAccountId).resourceName;
 
 		const subscriptions = await this.getSubscriptions();
+
 		const subscription = subscriptions.find(
 			(s) => s.subscriptionId === subscriptionId,
 		);
+
 		if (!subscription) {
 			throw new Error(
 				`Could not find subscription with ID "${subscriptionId}"`,
@@ -164,9 +177,11 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			resourceGroupName,
 			storageAccountName,
 		);
+
 		const keys = (keyResult.keys || <StorageAccountKey[]>[]).map(
 			(key) => new StorageAccountKeyWrapper(key),
 		);
+
 		const primaryKey = keys.find((key) => {
 			return key.keyName === "key1" || key.keyName === "primaryKey";
 		});
@@ -187,11 +202,13 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		const { containerName, blobPath } = this.parseUri(uri);
 
 		const blobEndpoint = storageAccount.primaryEndpoints?.blob;
+
 		if (blobEndpoint === undefined) {
 			throw Error("Unable to get blob endpoint.");
 		}
 
 		let credential: StorageSharedKeyCredentialBlob;
+
 		if (accountKey !== undefined) {
 			credential = new StorageSharedKeyCredentialBlob(
 				storageAccount.name as string,
@@ -202,7 +219,9 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		}
 
 		const serviceClient = new BlobServiceClient(blobEndpoint, credential);
+
 		const containerClient = serviceClient.getContainerClient(containerName);
+
 		const blobClient = containerClient.getBlobClient(blobPath);
 
 		return { containerClient, blobClient };
@@ -219,11 +238,13 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		const { containerName, blobPath } = this.parseUri(uri);
 
 		const dfsEndpoint = storageAccount.primaryEndpoints?.dfs;
+
 		if (dfsEndpoint === undefined) {
 			throw Error("Unable to get dfs endpoint.");
 		}
 
 		let credential: StorageSharedKeyCredentialDataLake;
+
 		if (accountKey !== undefined) {
 			credential = new StorageSharedKeyCredentialDataLake(
 				storageAccount.name as string,
@@ -237,11 +258,13 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			dfsEndpoint,
 			credential,
 		);
+
 		const fileSystemClient =
 			serviceClient.getFileSystemClient(containerName);
 
 		const pathUrl = new URL(dfsEndpoint);
 		pathUrl.pathname = `${containerName}/${blobPath}`;
+
 		const pathClient = new DataLakePathClient(
 			pathUrl.toString(),
 			credential,
@@ -261,6 +284,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 	static idToUri(resourceId: string): vscode.Uri {
 		let idRegExp: RegExp;
+
 		if (resourceId.startsWith("/attachedStorageAccounts")) {
 			idRegExp =
 				/(\/attachedStorageAccounts\/[^\/]+\/[^\/]+\/[^\/]+)\/?(.*)/i;
@@ -280,10 +304,13 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		matches = nonNullValue(matches, "resourceIdMatches");
 
 		const rootId = matches[1];
+
 		const storageAccountId = BlobPathUtils.trimSlash(
 			BlobPathUtils.dirname(BlobPathUtils.dirname(rootId)),
 		);
+
 		const containerName = BlobPathUtils.basename(rootId);
+
 		const blobPath = matches[2];
 
 		return BlobContainerFS.constructUri(
@@ -304,8 +331,10 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		);
 
 		const uri = BlobContainerFS.idToUri(treeItem.fullId);
+
 		const properties: BlobGetPropertiesResponse =
 			await client.getProperties();
+
 		if (
 			properties.contentLength &&
 			properties.contentLength > maxRemoteFileEditSizeBytes
@@ -313,14 +342,17 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			const downloadInstead: vscode.MessageItem = {
 				title: localize("downloadInstead", "Download file instead"),
 			};
+
 			const message: string = localize(
 				"failedToOpen",
 				'Failed to open "{0}". Cannot edit remote files larger than {1}MB.',
 				uri.fsPath,
 				maxRemoteFileEditSizeMB,
 			);
+
 			const result: vscode.MessageItem | undefined =
 				await vscode.window.showErrorMessage(message, downloadInstead);
+
 			if (result === downloadInstead) {
 				await download(context, [treeItem]);
 			}
@@ -358,18 +390,22 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 					} else {
 						const { storageAccount, accountKey } =
 							await this.getStorageAccount(uri, context);
+
 						const isHnsEnabled = !!storageAccount.isHnsEnabled;
+
 						const { containerClient, blobClient } =
 							await this.getBlobClients(
 								uri,
 								storageAccount,
 								accountKey,
 							);
+
 						if (!isHnsEnabled) {
 							try {
 								// Attempt to get the blob properties. If it succeeds, it's a file.
 								const properties =
 									await blobClient.getProperties();
+
 								return {
 									ctime: properties.createdOn?.getTime() ?? 0,
 									mtime:
@@ -379,19 +415,24 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 								};
 							} catch (error) {
 								const pe = parseError(error);
+
 								if (pe.errorType === "404") {
 									// If the blob doesn't exist, it might be a virtual directory.
 									const prefix =
 										BlobPathUtils.appendSlash(blobPath);
+
 									let continuationToken: string | undefined =
 										undefined;
+
 									let hasBlobs = false;
+
 									do {
 										// Occasionally the server returns 0 blobs and a non-empty continuation token.
 										const listResult = await containerClient
 											.listBlobsFlat({ prefix })
 											.byPage({ maxPageSize: 5 })
 											.next();
+
 										const response =
 											listResult.value as ListBlobsFlatSegmentResponse;
 										hasBlobs =
@@ -400,6 +441,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 										continuationToken =
 											response.continuationToken;
 									} while (!hasBlobs && !!continuationToken);
+
 									if (hasBlobs) {
 										return {
 											ctime: 0,
@@ -418,9 +460,11 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 							try {
 								const properties =
 									await blobClient.getProperties();
+
 								const isDirectory =
 									properties.metadata?.["hdi_isfolder"] ===
 									"true";
+
 								return {
 									ctime: properties.createdOn?.getTime() ?? 0,
 									mtime:
@@ -432,6 +476,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 								};
 							} catch (error) {
 								const pe = parseError(error);
+
 								if (pe.errorType === "404") {
 									throw vscode.FileSystemError.FileNotFound(
 										uri,
@@ -472,6 +517,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 				uri,
 				context,
 			);
+
 			const { containerClient } = await this.getBlobClients(
 				uri,
 				storageAccount,
@@ -481,11 +527,13 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			const results: [string, vscode.FileType][] = [];
 
 			let continuationToken: string | undefined = undefined;
+
 			do {
 				const prefix =
 					blobPath === ""
 						? blobPath
 						: BlobPathUtils.appendSlash(blobPath);
+
 				const listResult = containerClient
 					.listBlobsByHierarchy("/", {
 						prefix: prefix,
@@ -530,6 +578,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 				const { storageAccount, accountKey } =
 					await this.getStorageAccount(uri, context);
+
 				const isHnsEnabled = !!storageAccount.isHnsEnabled;
 
 				if (!isHnsEnabled) {
@@ -545,8 +594,11 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 						storageAccount,
 						accountKey,
 					);
+
 					const directoryClient = pathClient.toDirectoryClient();
+
 					const exists = await directoryClient.exists();
+
 					if (exists) {
 						throw vscode.FileSystemError.FileExists(uri);
 					} else {
@@ -554,6 +606,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 							await directoryClient.create();
 						} catch (error) {
 							const pe = parseError(error);
+
 							if (pe.errorType === "404") {
 								throw vscode.FileSystemError.FileNotFound(uri);
 							} else if (pe.errorType === "403") {
@@ -578,6 +631,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 				try {
 					const { storageAccount, accountKey } =
 						await this.getStorageAccount(uri, context);
+
 					const { blobClient } = await this.getBlobClients(
 						uri,
 						storageAccount,
@@ -585,9 +639,11 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 					);
 
 					const buffer = await blobClient.downloadToBuffer();
+
 					return buffer;
 				} catch (error) {
 					const pe = parseError(error);
+
 					if (pe.errorType === "404") {
 						throw vscode.FileSystemError.FileNotFound(uri);
 					} else if (pe.errorType === "403") {
@@ -613,14 +669,17 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 				const { storageAccount, accountKey } =
 					await this.getStorageAccount(uri, context);
+
 				const { blobClient } = await this.getBlobClients(
 					uri,
 					storageAccount,
 					accountKey,
 				);
+
 				const { baseName } = this.parseUri(uri);
 
 				const exists = await blobClient.exists();
+
 				if (!options.create && !exists) {
 					throw vscode.FileSystemError.FileNotFound(uri);
 				} else if (options.create && !options.overwrite && exists) {
@@ -663,6 +722,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 					);
 				} catch (error) {
 					const pe = parseError(error);
+
 					if (pe.errorType === "404") {
 						throw vscode.FileSystemError.FileNotFound(uri);
 					} else if (pe.errorType === "403") {
@@ -693,6 +753,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 				const { storageAccount, accountKey } =
 					await this.getStorageAccount(uri, context);
+
 				const isHnsEnabled = !!storageAccount.isHnsEnabled;
 
 				try {
@@ -710,6 +771,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 									baseName,
 								),
 							});
+
 							if (!isHnsEnabled) {
 								const { containerClient, blobClient } =
 									await this.getBlobClients(
@@ -717,7 +779,9 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 										storageAccount,
 										accountKey,
 									);
+
 								const exists = await blobClient.exists();
+
 								if (exists) {
 									// Check if there is matching blob and delete it.
 									await blobClient.delete();
@@ -726,9 +790,11 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 									let continuationToken: string | undefined =
 										undefined;
+
 									do {
 										const prefix =
 											BlobPathUtils.appendSlash(blobPath);
+
 										const listResult = containerClient
 											.listBlobsFlat({
 												prefix: prefix,
@@ -759,6 +825,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 										await Promise.allSettled(
 											deletePromiseBatch,
 										);
+
 										if (
 											cancellationToken.isCancellationRequested ||
 											!continuationToken
@@ -780,6 +847,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 					);
 				} catch (error) {
 					const pe = parseError(error);
+
 					if (pe.errorType === "403") {
 						throw vscode.FileSystemError.NoPermissions(uri);
 					}
@@ -803,7 +871,9 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 				const { storageAccount, accountKey } =
 					await this.getStorageAccount(oldUri, context);
+
 				const isHnsEnabled = !!storageAccount.isHnsEnabled;
+
 				if (!isHnsEnabled) {
 					throw new vscode.FileSystemError(
 						"Rename is not supported in a flat namespace storage account. (loc)",
@@ -815,7 +885,9 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 							storageAccount,
 							accountKey,
 						);
+
 						const exists = await pathClient.exists();
+
 						if (exists) {
 							throw vscode.FileSystemError.FileExists(newUri);
 						}
@@ -826,12 +898,14 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 						storageAccount,
 						accountKey,
 					);
+
 					const { blobPath } = this.parseUri(newUri);
 
 					try {
 						await pathClient.move(blobPath);
 					} catch (error) {
 						const pe = parseError(error);
+
 						if (pe.errorType === "404") {
 							// If old uri or any parent of the new uri doesn't exist, the service will return an 404 error.
 							throw vscode.FileSystemError.FileNotFound(newUri);

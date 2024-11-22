@@ -42,6 +42,7 @@ export async function startEmulator(
 				reject: (error: unknown) => void,
 			) => {
 				emulatorTask.catch(reject);
+
 				setTimeout(resolve, emulatorTimeoutMS);
 			},
 		);

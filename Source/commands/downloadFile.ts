@@ -35,9 +35,11 @@ export async function download(
 		...context,
 		...(await createActivityContext()),
 	};
+
 	const promptSteps: AzureWizardPromptStep<IDownloadWizardContext>[] = [
 		new DestinationPromptStep(),
 	];
+
 	if (!treeItems) {
 		promptSteps.push(new SasUrlPromptStep());
 	} else {

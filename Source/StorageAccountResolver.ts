@@ -31,10 +31,13 @@ export interface ResolvedStorageAccount extends ResolvedAppResourceBase {
 	label: string;
 	root: IStorageRoot;
 	storageAccount: StorageAccountWrapper;
+
 	getWebsiteCapableContainer(
 		context: IActionContext,
 	): Promise<BlobContainerTreeItem | undefined>;
+
 	getActualWebsiteHostingStatus(): Promise<WebsiteHostingStatus>;
+
 	setWebsiteHostingProperties(
 		properties: BlobServiceProperties,
 	): Promise<void>;
@@ -64,6 +67,7 @@ export class StorageAccountResolver implements AppResourceResolver {
 			"resolveResource",
 			async (context: IActionContext) => {
 				context.telemetry.properties.isActivationEvent = "true";
+
 				const storageManagementClient: StorageManagementClient =
 					await createStorageClient([context, subContext]);
 
@@ -105,7 +109,9 @@ export class StorageAccountResolver implements AppResourceResolver {
 				}
 
 				await this.listStorageAccountsTask;
+
 				const sa = this.storageAccountCache.get(resource.id);
+
 				if (!sa) {
 					throw new Error(
 						`Storage account not found: ${resource.id}`,

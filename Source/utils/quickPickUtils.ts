@@ -19,14 +19,17 @@ export async function showWorkspaceFoldersQuickPick(
 	subPathSetting: string | undefined,
 ): Promise<string> {
 	const folderQuickPickItems: IAzureQuickPickItem<string | undefined>[] = [];
+
 	if (vscode.workspace.workspaceFolders) {
 		for (const workspaceFolder of vscode.workspace.workspaceFolders) {
 			{
 				let fsPath: string = workspaceFolder.uri.fsPath;
+
 				if (subPathSetting) {
 					const subpath: string | undefined = vscode.workspace
 						.getConfiguration(extensionPrefix, workspaceFolder.uri)
 						.get(subPathSetting);
+
 					if (subpath) {
 						fsPath = path.join(fsPath, subpath);
 					}
@@ -40,8 +43,10 @@ export async function showWorkspaceFoldersQuickPick(
 
 				// If the workspace has any of build, dist, or out, show those as well
 				const buildDefaultPaths = ["build", "dist", "out"];
+
 				for (const defaultPath of buildDefaultPaths) {
 					const buildPath: string = path.join(fsPath, defaultPath);
+
 					if (await AzExtFsExtra.pathExists(buildPath)) {
 						folderQuickPickItems.push({
 							label: path.basename(buildPath),
@@ -62,6 +67,7 @@ export async function showWorkspaceFoldersQuickPick(
 
 	const folderQuickPickOption = { placeHolder: placeHolderString };
 	context.telemetry.properties.cancelStep = "showWorkspaceFolders";
+
 	const pickedItem = await context.ui.showQuickPick(
 		folderQuickPickItems,
 		folderQuickPickOption,
@@ -69,6 +75,7 @@ export async function showWorkspaceFoldersQuickPick(
 
 	if (!pickedItem.data) {
 		context.telemetry.properties.cancelStep = "showWorkspaceFoldersBrowse";
+
 		const browseResult = await context.ui.showOpenDialog({
 			canSelectFiles: false,
 			canSelectFolders: true,
@@ -79,9 +86,11 @@ export async function showWorkspaceFoldersQuickPick(
 		});
 
 		context.telemetry.properties.cancelStep = undefined;
+
 		return browseResult[0].fsPath;
 	} else {
 		context.telemetry.properties.cancelStep = undefined;
+
 		return pickedItem.data;
 	}
 }

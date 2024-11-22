@@ -27,6 +27,7 @@ export class TransferProgress {
 		// progress not displaying in the notification window. So debounce calls to notificationProgress.report
 		if (this.lastUpdated + this.updateTimerMs < Date.now()) {
 			this.preReport(finishedWork, totalWork);
+
 			if (this.percentage !== this.lastPercentage) {
 				notificationProgress.report({
 					message: this.message,
@@ -39,6 +40,7 @@ export class TransferProgress {
 
 	public reportToOutputWindow(finishedWork: number, totalWork: number): void {
 		this.preReport(finishedWork, totalWork);
+
 		if (this.percentage !== this.lastPercentage) {
 			ext.outputChannel.appendLog(this.message);
 		}
@@ -47,6 +49,7 @@ export class TransferProgress {
 
 	private preReport(finishedWork: number, totalWork: number): void {
 		this.percentage = Math.trunc((finishedWork / totalWork) * 100);
+
 		const prefix: string = this.messagePrefix
 			? `${this.messagePrefix}: `
 			: "";

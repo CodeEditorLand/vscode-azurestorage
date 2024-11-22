@@ -29,11 +29,14 @@ export async function deleteFilesAndDirectories(
 		await ext.rgApi.appResourceTreeView.reveal(treeItem);
 		await treeItem.deleteTreeItem(context);
 		await parentContainer.refresh(context);
+
 		return;
 	}
 
 	const dirPaths: string[] = [];
+
 	let shouldSkip;
+
 	for (const node of selection) {
 		shouldSkip = false;
 
@@ -41,10 +44,12 @@ export async function deleteFilesAndDirectories(
 		for (const dirPath of dirPaths) {
 			if (isSubpath(dirPath, node.fullId)) {
 				shouldSkip = true;
+
 				break;
 			}
 		}
 		if (shouldSkip) continue;
+
 		if (isTreeItemDirectory(node)) {
 			dirPaths.push(node.fullId);
 		}

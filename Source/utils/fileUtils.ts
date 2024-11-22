@@ -38,6 +38,7 @@ export async function createShareClient(
 ): Promise<ShareClient> {
 	const shareServiceClient: ShareServiceClient =
 		await root.createShareServiceClient();
+
 	return shareServiceClient.getShareClient(shareName);
 }
 
@@ -47,6 +48,7 @@ export async function createDirectoryClient(
 	directoryName: string,
 ): Promise<ShareDirectoryClient> {
 	const shareClient: ShareClient = await createShareClient(root, shareName);
+
 	return shareClient.getDirectoryClient(directoryName);
 }
 
@@ -61,6 +63,7 @@ export async function createFileClient(
 		shareName,
 		directoryName,
 	);
+
 	return directoryClient.getFileClient(fileName);
 }
 
@@ -78,6 +81,7 @@ export async function askAndCreateEmptyTextFile(
 			directoryPath,
 			shareName,
 		));
+
 	return await window.withProgress(
 		{ location: ProgressLocation.Window },
 		async (progress) => {
@@ -86,12 +90,14 @@ export async function askAndCreateEmptyTextFile(
 				message: `Azure Storage: Creating file '${fileName}'`,
 			});
 			await createFile(directoryPath, fileName, shareName, parent.root);
+
 			const fileClient: ShareFileClient = await createFileClient(
 				parent.root,
 				shareName,
 				directoryPath,
 				fileName,
 			);
+
 			return new FileTreeItem(
 				parent,
 				fileName,
@@ -116,6 +122,7 @@ export async function getFileOrDirectoryName(
 		validateInput: async (name: string) => {
 			const nameError: string | undefined =
 				validateFileOrDirectoryName(name);
+
 			if (nameError) {
 				return nameError;
 			} else if (
@@ -149,8 +156,10 @@ export async function doesFileExist(
 		directoryPath,
 		fileName,
 	);
+
 	try {
 		await fileService.getProperties();
+
 		return true;
 	} catch {
 		return false;
@@ -194,6 +203,7 @@ export async function updateFileFromText(
 		directoryPath,
 		name,
 	);
+
 	let options: FileParallelUploadOptions = await getExistingCreateOptions(
 		directoryPath,
 		name,
@@ -232,8 +242,10 @@ export async function getExistingCreateOptions(
 		directoryPath,
 		name,
 	);
+
 	const propertiesResult: FileGetPropertiesResponse =
 		await fileClient.getProperties();
+
 	const options: FileCreateOptions = {};
 	options.fileHttpHeaders = {};
 	options.fileHttpHeaders.fileCacheControl = propertiesResult.cacheControl;
@@ -246,5 +258,6 @@ export async function getExistingCreateOptions(
 	options.fileHttpHeaders.fileContentMD5 = undefined; // Don't allow the existing MD5 hash to be used for the updated file
 	options.fileHttpHeaders.fileContentType = propertiesResult.contentType;
 	options.metadata = propertiesResult.metadata;
+
 	return options;
 }

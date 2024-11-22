@@ -21,6 +21,7 @@ export function isAzuriteExtensionInstalled(): boolean {
 export async function isAzuriteCliInstalled(): Promise<boolean> {
 	try {
 		await cpUtils.executeCommand(undefined, undefined, "azurite -v");
+
 		return true;
 	} catch {
 		return false;
@@ -36,5 +37,6 @@ export function warnAzuriteNotInstalled(context: IActionContext): void {
 	);
 	context.telemetry.properties.cancelStep = "installAzuriteExtension";
 	context.errorHandling.suppressDisplay = true;
+
 	throw new Error(`"${azuriteExtensionId}" extension is not installed.`);
 }

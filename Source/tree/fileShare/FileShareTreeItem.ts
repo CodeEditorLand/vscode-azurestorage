@@ -88,6 +88,7 @@ export class FileShareTreeItem
 			services: "f", // file
 			resourceTypes: "co", // container, object
 		};
+
 		return this.root.generateSasToken(accountSASSignatureValues);
 	}
 
@@ -104,6 +105,7 @@ export class FileShareTreeItem
 
 		if (clearCache) {
 			this._continuationToken = undefined;
+
 			const ti = new GenericTreeItem(this, {
 				label: this._openInFileExplorerString,
 				commandId: "azureStorage.openInFileExplorer",
@@ -129,7 +131,9 @@ export class FileShareTreeItem
 			this._continuationToken,
 		);
 		this._continuationToken = continuationToken;
+
 		const shareServiceClient = await this.root.createShareServiceClient();
+
 		return result
 			.concat(
 				directories.map((directory: DirectoryItem) => {
@@ -179,12 +183,14 @@ export class FileShareTreeItem
 
 	public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
 		const message: string = `Are you sure you want to delete file share '${this.label}' and all its contents?`;
+
 		const result = await context.ui.showWarningMessage(
 			message,
 			{ modal: true },
 			DialogResponses.deleteResponse,
 			DialogResponses.cancel,
 		);
+
 		if (result === DialogResponses.deleteResponse) {
 			const shareClient: ShareClient = await createShareClient(
 				this.root,
@@ -204,6 +210,7 @@ export class FileShareTreeItem
 			IFileShareCreateChildContext,
 	): Promise<AzExtTreeItem> {
 		let child: AzExtTreeItem;
+
 		if (context.remoteFilePath && context.localFilePath) {
 			context.showCreatingTreeItem(context.remoteFilePath);
 			await this.uploadLocalFile(
@@ -211,6 +218,7 @@ export class FileShareTreeItem
 				context.localFilePath,
 				context.remoteFilePath,
 			);
+
 			const shareServiceClient: ShareServiceClient =
 				await this.root.createShareServiceClient();
 			child = new FileTreeItem(
@@ -236,6 +244,7 @@ export class FileShareTreeItem
 			);
 		}
 		AzureStorageFS.fireCreateEvent(child);
+
 		return child;
 	}
 
@@ -247,12 +256,15 @@ export class FileShareTreeItem
 		cancellationToken?: vscode.CancellationToken,
 	): Promise<void> {
 		const parentDirectoryPath: string = path.dirname(destFilePath);
+
 		const parentDirectories: string[] = parentDirectoryPath.split("/");
 
 		// Ensure parent directories exist before creating child files
 		let partialParentDirectoryPath: string = "";
+
 		for (const dir of parentDirectories) {
 			partialParentDirectoryPath += `${dir}/`;
+
 			if (
 				!(await doesDirectoryExist(
 					this,

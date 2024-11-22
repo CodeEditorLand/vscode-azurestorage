@@ -55,6 +55,7 @@ export class DirectoryTreeItem
 	implements ICopyUrl, ITransferSrcOrDstTreeItem
 {
 	public parent: FileShareTreeItem | DirectoryTreeItem;
+
 	constructor(
 		parent: FileShareTreeItem | DirectoryTreeItem,
 		public readonly parentPath: string,
@@ -93,6 +94,7 @@ export class DirectoryTreeItem
 			services: "f", // file
 			resourceTypes: "co", // container, object
 		};
+
 		return this.root.generateSasToken(accountSASSignatureValues);
 	}
 
@@ -131,6 +133,7 @@ export class DirectoryTreeItem
 					this.directoryName,
 					file.name,
 				);
+
 				return new FileTreeItem(
 					this,
 					file.name,
@@ -148,6 +151,7 @@ export class DirectoryTreeItem
 					this.shareName,
 					directory.name,
 				);
+
 				return new DirectoryTreeItem(
 					this,
 					this.fullPath,
@@ -171,6 +175,7 @@ export class DirectoryTreeItem
 				this.shareName,
 				this.fullPath,
 			);
+
 		const url = directoryClient.url;
 		await copyAndShowToast(url, "Directory URL");
 	}
@@ -179,6 +184,7 @@ export class DirectoryTreeItem
 		context: ICreateChildImplContext & IFileShareCreateChildContext,
 	): Promise<AzExtTreeItem> {
 		let child: AzExtTreeItem;
+
 		if (context.childType === FileTreeItem.contextValue) {
 			child = await askAndCreateEmptyTextFile(
 				this,
@@ -195,6 +201,7 @@ export class DirectoryTreeItem
 			);
 		}
 		AzureStorageFS.fireCreateEvent(child);
+
 		return child;
 	}
 
@@ -202,6 +209,7 @@ export class DirectoryTreeItem
 		context: IActionContext & IDirectoryDeleteContext,
 	): Promise<void> {
 		let result: MessageItem | undefined;
+
 		if (!context.suppressMessage) {
 			// Note: Azure will fail the directory delete if it's not empty, so no need to ask about deleting contents
 			const message: string = `Are you sure you want to delete the directory '${this.label}' and all of its files and subdirectories?`;

@@ -15,16 +15,23 @@ import { AttachedStorageAccountsTreeItem } from "./tree/AttachedStorageAccountsT
  */
 export namespace ext {
 	export let context: ExtensionContext;
+
 	export let outputChannel: IAzExtOutputChannel;
+
 	export let ignoreBundle: boolean | undefined;
 
 	export let attachedStorageAccountsTreeItem: AttachedStorageAccountsTreeItem;
+
 	export let azureStorageFS: AzureStorageFS;
+
 	export let azureStorageWorkspaceFS: AzureStorageFS;
+
 	export const azCopyExePath: string = "azcopy";
+
 	export const prefix: string = "azureStorage";
 
 	export let rgApi: AzureHostExtensionApi;
+
 	export let lastUriUpload: Uri | undefined;
 
 	// When debugging thru VS Code as a web environment, the UIKind is Desktop. However, if you sideload it into the browser, you must

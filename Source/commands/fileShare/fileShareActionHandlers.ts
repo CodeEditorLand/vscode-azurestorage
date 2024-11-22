@@ -60,8 +60,11 @@ async function openFileShareInStorageExplorer(
 	treeItem: FileShareTreeItem,
 ): Promise<void> {
 	const accountId = treeItem.root.storageAccountId;
+
 	const subscriptionid = treeItem.subscription.subscriptionId;
+
 	const resourceType = "Azure.FileShare";
+
 	const resourceName = treeItem.shareName;
 
 	await storageExplorerLauncher.openResource(

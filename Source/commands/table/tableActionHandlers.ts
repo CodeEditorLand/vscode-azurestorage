@@ -28,7 +28,9 @@ async function openTableInStorageExplorer(
 	treeItem: TableTreeItem,
 ): Promise<void> {
 	const accountId = treeItem.root.storageAccountId;
+
 	const resourceType = "Azure.Table";
+
 	const resourceName = treeItem.tableName;
 
 	await storageExplorerLauncher.openResource(

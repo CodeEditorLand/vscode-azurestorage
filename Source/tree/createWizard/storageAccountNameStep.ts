@@ -38,6 +38,7 @@ export class StorageAccountNameStep<
 			})
 		).trim();
 		context.valuesToMask.push(context.newStorageAccountName);
+
 		if (!context.relatedNameTask) {
 			context.relatedNameTask = this.generateRelatedName(
 				context,
@@ -80,6 +81,7 @@ export class StorageAccountNameStep<
 					name,
 					type: "Microsoft.Storage/storageAccounts",
 				});
+
 			if (!nameAvailabilityResult.nameAvailable) {
 				return nameAvailabilityResult.message;
 			} else {

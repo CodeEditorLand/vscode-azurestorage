@@ -63,6 +63,7 @@ export async function selectStorageAccountTreeItemForCommand(
 	);
 
 	let accountTreeItem: ResolvedStorageAccountTreeItem & AzExtTreeItem;
+
 	if (storageOrContainerTreeItem instanceof BlobContainerTreeItem) {
 		// Currently the portal only allows configuring at the storage account level, so retrieve the storage account treeItem
 		accountTreeItem = storageOrContainerTreeItem.getStorageAccountTreeItem(
@@ -86,6 +87,7 @@ export async function selectStorageAccountTreeItemForCommand(
 
 			if (context.showEnableWebsiteHostingPrompt) {
 				context.telemetry.properties.enableResponse = "false";
+
 				const enableWebHostingPrompt = "Enable website hosting";
 				// don't check result since cancel throws UserCancelledError and only other option is 'Enable'
 				await context.ui.showWarningMessage(

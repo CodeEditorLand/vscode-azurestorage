@@ -73,6 +73,7 @@ export class FileShareGroupTreeItem
 
 		const shareServiceClient: ShareServiceClient =
 			await this.root.createShareServiceClient();
+
 		const response: AsyncIterableIterator<ServiceListSharesSegmentResponse> =
 			shareServiceClient.listShares().byPage({
 				continuationToken: this._continuationToken,
@@ -80,6 +81,7 @@ export class FileShareGroupTreeItem
 			});
 
 		let responseValue: ServiceListSharesSegmentResponse;
+
 		try {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			responseValue = (await response.next()).value;
@@ -116,6 +118,7 @@ export class FileShareGroupTreeItem
 		context: ICreateChildImplContext,
 	): Promise<FileShareTreeItem> {
 		const wizardContext: IFileShareWizardContext = { ...context };
+
 		const promptSteps = [
 			new FileShareNameStep(),
 			new StorageQuotaPromptStep(),
@@ -126,7 +129,9 @@ export class FileShareGroupTreeItem
 			promptSteps,
 		});
 		await wizard.prompt();
+
 		const shareName = nonNullProp(wizardContext, "name");
+
 		const quota = nonNullProp(wizardContext, "quota");
 
 		return await window.withProgress(
@@ -140,9 +145,11 @@ export class FileShareGroupTreeItem
 						shareName,
 					),
 				});
+
 				const shareServiceClient: ShareServiceClient =
 					await this.root.createShareServiceClient();
 				await shareServiceClient.createShare(shareName, { quota });
+
 				return new FileShareTreeItem(
 					this,
 					shareName,

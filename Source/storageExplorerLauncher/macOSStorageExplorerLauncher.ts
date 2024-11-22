@@ -38,9 +38,11 @@ export class MacOSStorageExplorerLauncher implements IStorageExplorerLauncher {
 						selectedLocation!,
 						MacOSStorageExplorerLauncher.subExecutableLocation,
 					);
+
 					if (!(await AzExtFsExtra.pathExists(exePath))) {
 						context.telemetry.properties.storageExplorerNotFound =
 							"true";
+
 						const selected: "Browse" | "Download" = <
 							"Browse" | "Download"
 						>await vscode.window.showWarningMessage(
@@ -59,6 +61,7 @@ export class MacOSStorageExplorerLauncher implements IStorageExplorerLauncher {
 									userSelectedAppLocation,
 									vscode.ConfigurationTarget.Global,
 								);
+
 							return await MacOSStorageExplorerLauncher.getStorageExplorerExecutable(
 								"Selected app is not a valid Storage Explorer installation. Browse to existing installation location or download and install Storage Explorer.",
 							);
@@ -110,6 +113,7 @@ export class MacOSStorageExplorerLauncher implements IStorageExplorerLauncher {
 	): Promise<void> {
 		const storageExplorerExecutable: string =
 			await MacOSStorageExplorerLauncher.getStorageExplorerExecutable();
+
 		if (!storageExplorerExecutable) {
 			throw new UserCancelledError();
 		}
@@ -122,9 +126,11 @@ export class MacOSStorageExplorerLauncher implements IStorageExplorerLauncher {
 	private static async showOpenDialog(): Promise<string> {
 		const defaultWorkspace: vscode.WorkspaceFolder | undefined =
 			getSingleRootWorkspace();
+
 		const defaultUri: vscode.Uri | undefined = defaultWorkspace
 			? defaultWorkspace.uri
 			: undefined;
+
 		const options: vscode.OpenDialogOptions = {
 			defaultUri: defaultUri,
 			canSelectFiles: true,
@@ -135,6 +141,7 @@ export class MacOSStorageExplorerLauncher implements IStorageExplorerLauncher {
 				Applications: ["app"],
 			},
 		};
+
 		const result: vscode.Uri[] | undefined =
 			await vscode.window.showOpenDialog(options);
 

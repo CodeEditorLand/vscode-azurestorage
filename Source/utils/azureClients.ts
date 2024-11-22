@@ -19,6 +19,7 @@ export async function createStorageClient(
 	if (parseClientContext(context).isCustomCloud) {
 		// set API version for Azure Stack
 		process.env.AZCOPY_DEFAULT_SERVICE_API_VERSION = "2019-02-02";
+
 		return <StorageManagementClient>(
 			(<unknown>(
 				createAzureClient(

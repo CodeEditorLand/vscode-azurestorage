@@ -31,6 +31,7 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 		}>,
 	): Promise<void> {
 		const directoryName = nonNullProp(wizardContext, "dirName");
+
 		const deletingBlobDirectory: string = localize(
 			"deletingDirectory",
 			'Deleting directory "{0}"...',
@@ -38,13 +39,16 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 		);
 		ext.outputChannel.appendLog(deletingBlobDirectory);
 		progress.report({ message: deletingBlobDirectory });
+
 		const errors: boolean = await this.deleteFolder(wizardContext);
+
 		if (errors) {
 			ext.outputChannel.appendLog(
 				"Please refresh the viewlet to see the changes made.",
 			);
 
 			const viewOutput: MessageItem = { title: "View Errors" };
+
 			const errorMessage: string = `Errors occurred when deleting "${directoryName}".`;
 			void window
 				.showWarningMessage(errorMessage, viewOutput)
@@ -82,11 +86,13 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 		const dirPaths: BlobDirectoryTreeItem[] = [];
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		let dirPath: BlobDirectoryTreeItem | undefined = blobDirectory;
+
 		let errors: boolean = false;
 
 		while (dirPath) {
 			const children: AzExtTreeItem[] =
 				await dirPath.loadAllChildren(context);
+
 			for (const child of children) {
 				if (child instanceof BlobTreeItem) {
 					try {

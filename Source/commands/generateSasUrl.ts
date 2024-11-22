@@ -14,8 +14,11 @@ export async function generateSasUrl(
 	treeItem: ITransferSrcOrDstTreeItem,
 ): Promise<string> {
 	const resourceUri = treeItem.resourceUri;
+
 	const sasToken = treeItem.transferSasToken;
+
 	const sasUrl: string = `${resourceUri}${posix.sep}${treeItem.remoteFilePath}?${sasToken}`;
 	await copyAndShowToast(sasUrl, "SAS Token and URL");
+
 	return sasUrl;
 }

@@ -28,7 +28,9 @@ async function openQueueInStorageExplorer(
 	treeItem: QueueTreeItem,
 ): Promise<void> {
 	const accountId = treeItem.root.storageAccountId;
+
 	const resourceType = "Azure.Queue";
+
 	const resourceName = treeItem.queue.name;
 
 	await storageExplorerLauncher.openResource(

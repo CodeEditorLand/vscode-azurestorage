@@ -38,10 +38,12 @@ export async function uploadFolder(
 		uri,
 		calledFromUploadToAzureStorage: uri !== undefined,
 	};
+
 	const wizardOptions: IWizardOptions<IUploadFolderWizardContext> = {
 		promptSteps: [new GetFolderDestinationDirectoryStep()],
 		executeSteps: [new UploadFolderStep(cancellationToken)],
 	};
+
 	const wizard: AzureWizard<IUploadFolderWizardContext> = new AzureWizard(
 		wizardContext,
 		wizardOptions,
@@ -52,6 +54,7 @@ export async function uploadFolder(
 		wizardContext,
 		"treeItem",
 	);
+
 	const nUri: vscode.Uri = nonNullProp(wizardContext, "uri");
 	wizardContext.activityTitle = localize(
 		"activityLogUploadFolder",
@@ -61,5 +64,6 @@ export async function uploadFolder(
 	);
 
 	await wizard.execute();
+
 	return wizardContext.resolution as IAzCopyResolution;
 }

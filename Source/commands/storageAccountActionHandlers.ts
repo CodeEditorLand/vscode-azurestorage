@@ -98,7 +98,9 @@ export async function deployStaticWebsite(
 	target?: vscode.Uri | StorageAccountTreeItem | BlobContainerTreeItem,
 ): Promise<void> {
 	context.telemetry.eventVersion = 2;
+
 	let sourcePath: string | undefined;
+
 	let destTreeItem:
 		| (StorageAccountTreeItem & AzExtTreeItem)
 		| BlobContainerTreeItem
@@ -110,6 +112,7 @@ export async function deployStaticWebsite(
 		if (target.scheme === "azurestorage") {
 			context.telemetry.properties.contextValue =
 				"BlobContainer/FileShare";
+
 			throw new Error(
 				"Deploying an Azure resource from the Explorer is not supported.",
 			);
@@ -145,6 +148,7 @@ export async function deployStaticWebsite(
 	// Get the $web container
 	const destContainerTreeItem =
 		await destAccountTreeItem.getWebsiteCapableContainer(context);
+
 	if (!destContainerTreeItem) {
 		throw new Error(
 			`Could not find $web blob container for storage account "${destAccountTreeItem.label}"`,
@@ -164,11 +168,14 @@ async function runPreDeployTask(
 		.getConfiguration(extensionPrefix, vscode.Uri.file(deployFsPath))
 		.get(configurationSettingsKeys.preDeployTask);
 	context.telemetry.properties.hasPreDeployTask = String(!!taskName);
+
 	if (taskName) {
 		const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
+
 		const preDeployTask: vscode.Task | undefined = tasks.find(
 			(task: vscode.Task) => isTaskEqual(taskName, deployFsPath, task),
 		);
+
 		if (preDeployTask) {
 			await vscode.tasks.executeTask(preDeployTask);
 			await new Promise(
@@ -181,6 +188,7 @@ async function runPreDeployTask(
 							(e: vscode.TaskProcessEndEvent) => {
 								if (e.execution.task === preDeployTask) {
 									listener.dispose();
+
 									if (e.exitCode === 0) {
 										resolve();
 									} else {
@@ -216,6 +224,7 @@ function isTaskEqual(
 		const workspaceFolder = <Partial<vscode.WorkspaceFolder>>(
 			actualTask.scope
 		);
+
 		return (
 			!!workspaceFolder.uri &&
 			(isPathEqual(workspaceFolder.uri.fsPath, expectedPath) ||

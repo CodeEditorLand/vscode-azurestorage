@@ -18,6 +18,7 @@ import { TableGroupTreeItem } from "./TableGroupTreeItem";
 
 export class TableTreeItem extends AzExtTreeItem implements IStorageTreeItem {
 	public parent: TableGroupTreeItem;
+
 	constructor(
 		parent: TableGroupTreeItem,
 		public readonly tableName: string,
@@ -39,12 +40,14 @@ export class TableTreeItem extends AzExtTreeItem implements IStorageTreeItem {
 
 	public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
 		const message: string = `Are you sure you want to delete table '${this.label}' and all its contents?`;
+
 		const result = await context.ui.showWarningMessage(
 			message,
 			{ modal: true },
 			DialogResponses.deleteResponse,
 			DialogResponses.cancel,
 		);
+
 		if (result === DialogResponses.deleteResponse) {
 			const tableServiceClient =
 				await this.root.createTableServiceClient();

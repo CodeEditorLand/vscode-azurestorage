@@ -80,6 +80,7 @@ export async function downloadFoldersAndFiles(
 	).filter((maybeFile): maybeFile is DownloadItem => maybeFile !== undefined);
 
 	const itemsToDownload = foldersToDownload.concat(filesToDownload);
+
 	if (itemsToDownload.length > 0) {
 		const inProgressMessage: string = localize(
 			"downloadingTo",
@@ -210,6 +211,7 @@ async function startAzCopyDownload(
 ): Promise<void> {
 	// Import AzCopy packages with async import to avoid loading them in runtimes that don't support AzCopy.
 	const { azCopyTransfer } = await import("./azCopy/azCopyTransfer");
+
 	const { createAzCopyLocalLocation, createAzCopyRemoteLocation } =
 		await import("./azCopy/azCopyLocations");
 
@@ -219,10 +221,14 @@ async function startAzCopyDownload(
 		item.remoteFilePath,
 		item.isDirectory,
 	);
+
 	const dst: ILocalLocation = createAzCopyLocalLocation(item.localFilePath);
+
 	const fromTo: FromToOption =
 		item.type === "blob" ? "BlobLocal" : "FileLocal";
+
 	const units: "files" | "bytes" = item.isDirectory ? "files" : "bytes";
+
 	const transferProgress: TransferProgress = new TransferProgress(
 		units,
 		item.remoteFileName,
@@ -236,6 +242,7 @@ async function startAzCopyDownload(
 		progress,
 		cancellationToken,
 	);
+
 	if (item.isDirectory) {
 		await AzExtFsExtra.ensureDir(item.localFilePath);
 	}
@@ -249,15 +256,18 @@ async function startAzCopyFileUpload(
 ) {
 	// Import AzCopy packages with async import to avoid loading them in runtimes that don't support AzCopy.
 	const { azCopyTransfer } = await import("./azCopy/azCopyTransfer");
+
 	const { createAzCopyLocalLocation, createAzCopyRemoteLocation } =
 		await import("./azCopy/azCopyLocations");
 
 	const src: ILocalLocation = createAzCopyLocalLocation(item.localFilePath);
+
 	const dst: IRemoteSasLocation = createAzCopyRemoteLocation(
 		item.resourceUri,
 		item.transferSasToken,
 		item.remoteFilePath,
 	);
+
 	const transferProgress: TransferProgress = new TransferProgress(
 		"bytes",
 		item.remoteFilePath,
@@ -282,13 +292,16 @@ async function startAzCopyFolderUpload(
 ): Promise<void> {
 	// Import AzCopy packages with async import to avoid loading them in runtimes that don't support AzCopy.
 	const { azCopyTransfer } = await import("./azCopy/azCopyTransfer");
+
 	const { createAzCopyLocalLocation, createAzCopyRemoteLocation } =
 		await import("./azCopy/azCopyLocations");
 
 	let useWildCard: boolean = true;
+
 	if (await isEmptyDirectory(item.localFilePath)) {
 		useWildCard = false;
 		item.remoteFilePath = dirname(item.remoteFilePath);
+
 		if (item.remoteFilePath === ".") {
 			item.remoteFilePath = "";
 		}
@@ -300,12 +313,14 @@ async function startAzCopyFolderUpload(
 		item.localFilePath,
 		useWildCard,
 	);
+
 	const dst: IRemoteSasLocation = createAzCopyRemoteLocation(
 		item.resourceUri,
 		item.transferSasToken,
 		item.remoteFilePath,
 		false,
 	);
+
 	const transferProgress: TransferProgress = new TransferProgress(
 		"files",
 		messagePrefix || item.remoteFilePath,

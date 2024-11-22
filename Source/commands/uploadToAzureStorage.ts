@@ -46,9 +46,12 @@ export async function uploadToAzureStorage(
 			FileShareTreeItem.contextValue,
 		],
 	});
+
 	const destinationDirectory: string =
 		await promptForDestinationDirectory(context);
+
 	const allFolderUris: vscode.Uri[] = [];
+
 	const allFileUris: vscode.Uri[] = [];
 
 	for (const uri of uris) {
@@ -69,21 +72,26 @@ export async function uploadToAzureStorage(
 	}
 
 	let hasParent: boolean;
+
 	const overwriteChoice: { choice: OverwriteChoice | undefined } = {
 		choice: undefined,
 	};
+
 	const folderUrisToUpload: vscode.Uri[] = [];
+
 	const fileUrisToUpload: vscode.Uri[] = [];
 
 	// Only upload folders and files if their containing folder isn't already being uploaded.
 	for (const folderUri of allFolderUris) {
 		hasParent = false;
+
 		for (const parentFolderUri of allFolderUris) {
 			if (
 				folderUri !== parentFolderUri &&
 				isSubpath(parentFolderUri.fsPath, folderUri.fsPath)
 			) {
 				hasParent = true;
+
 				break;
 			}
 		}
@@ -92,6 +100,7 @@ export async function uploadToAzureStorage(
 			folderUri.fsPath,
 			destinationDirectory,
 		);
+
 		if (
 			!hasParent &&
 			(await checkCanUpload(context, destPath, overwriteChoice, treeItem))
@@ -102,9 +111,11 @@ export async function uploadToAzureStorage(
 
 	for (const fileUri of allFileUris) {
 		hasParent = false;
+
 		for (const folderUri of allFolderUris) {
 			if (isSubpath(folderUri.fsPath, fileUri.fsPath)) {
 				hasParent = true;
+
 				break;
 			}
 		}
@@ -113,6 +124,7 @@ export async function uploadToAzureStorage(
 			fileUri.fsPath,
 			destinationDirectory,
 		);
+
 		if (
 			!hasParent &&
 			(await checkCanUpload(context, destPath, overwriteChoice, treeItem))
@@ -127,6 +139,7 @@ export async function uploadToAzureStorage(
 	}
 
 	const errors: IParsedError[] = [];
+
 	const title: string = getUploadingMessage(treeItem.label);
 	await vscode.window.withProgress(
 		{

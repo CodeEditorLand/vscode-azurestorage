@@ -40,6 +40,7 @@ export async function askAndCreateChildDirectory(
 	const dirName: string =
 		context.childName ||
 		(await getFileOrDirectoryName(context, parent, parentPath, shareName));
+
 	return await window.withProgress(
 		{ location: ProgressLocation.Window },
 		async (progress) => {
@@ -47,6 +48,7 @@ export async function askAndCreateChildDirectory(
 			progress.report({
 				message: `Azure Storage: Creating directory '${path.posix.join(parentPath, dirName)}'`,
 			});
+
 			const directoryClient: ShareDirectoryClient =
 				await createDirectoryClient(
 					parent.root,
@@ -54,6 +56,7 @@ export async function askAndCreateChildDirectory(
 					path.posix.join(parentPath, dirName),
 				);
 			await directoryClient.create();
+
 			return new DirectoryTreeItem(
 				parent,
 				parentPath,
@@ -80,6 +83,7 @@ export async function listFilesInDirectory(
 		shareName,
 		directory,
 	);
+
 	const response: AsyncIterableIterator<DirectoryListFilesAndDirectoriesSegmentResponse> =
 		directoryClient
 			.listFilesAndDirectories()
@@ -91,6 +95,7 @@ export async function listFilesInDirectory(
 	).value;
 
 	const files: FileItem[] = responseValue.segment.fileItems;
+
 	const directories: DirectoryItem[] = responseValue.segment.directoryItems;
 	currentToken = responseValue.continuationToken;
 
@@ -121,7 +126,9 @@ export async function deleteDirectoryAndContents(
 			root,
 			currentToken,
 		);
+
 		let promises: Promise<void>[] = [];
+
 		for (const file of files) {
 			const promise = deleteFile(directory, file.name, shareName, root);
 			promises.push(promise);
@@ -145,6 +152,7 @@ export async function deleteDirectoryAndContents(
 		}
 
 		currentToken = continuationToken;
+
 		if (!currentToken) {
 			break;
 		}
@@ -169,8 +177,10 @@ export async function doesDirectoryExist(
 		shareName,
 		directoryPath,
 	);
+
 	try {
 		await directoryClient.getProperties();
+
 		return true;
 	} catch {
 		return false;

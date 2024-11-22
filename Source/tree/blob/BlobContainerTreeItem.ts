@@ -105,6 +105,7 @@ export class BlobContainerTreeItem
 			services: "b", // blob
 			resourceTypes: "co", // container, object
 		};
+
 		return this.root.generateSasToken(accountSASSignatureValues);
 	}
 
@@ -114,6 +115,7 @@ export class BlobContainerTreeItem
 	): Promise<BlobContainerTreeItem> {
 		const containerClient: ContainerClient =
 			await createBlobContainerClient(parent.root, container.name);
+
 		const ti = new BlobContainerTreeItem(
 			parent,
 			container,
@@ -121,6 +123,7 @@ export class BlobContainerTreeItem
 		);
 		// Get static website status to display the appropriate icon
 		await ti.refreshImpl();
+
 		return ti;
 	}
 
@@ -130,6 +133,7 @@ export class BlobContainerTreeItem
 			this.container.name === staticWebsiteContainerName
 				? "BrandAzureStaticWebsites"
 				: "AzureBlobContainer";
+
 		return {
 			light: path.join(
 				getResourcesPath(),
@@ -152,8 +156,10 @@ export class BlobContainerTreeItem
 		clearCache: boolean,
 	): Promise<AzExtTreeItem[]> {
 		const result: AzExtTreeItem[] = [];
+
 		if (clearCache) {
 			this._continuationToken = undefined;
+
 			const ti = new GenericTreeItem(this, {
 				label: this._openInFileExplorerString,
 				commandId: "azureStorage.openInFileExplorer",
@@ -169,6 +175,7 @@ export class BlobContainerTreeItem
 			this._continuationToken,
 		);
 		this._continuationToken = continuationToken;
+
 		return result.concat(children);
 	}
 
@@ -198,9 +205,13 @@ export class BlobContainerTreeItem
 		properties?: TelemetryProperties,
 	): Promise<BlobItem[]> {
 		let currentToken: string | undefined;
+
 		let response: AsyncIterableIterator<ContainerListBlobFlatSegmentResponse>;
+
 		let responseValue: ListBlobsFlatSegmentResponse;
+
 		const blobs: BlobItem[] = [];
+
 		const containerClient: ContainerClient =
 			await createBlobContainerClient(this.root, this.container.name);
 
@@ -220,6 +231,7 @@ export class BlobContainerTreeItem
 
 			blobs.push(...responseValue.segment.blobItems);
 			currentToken = responseValue.continuationToken;
+
 			if (!currentToken) {
 				break;
 			}
@@ -230,12 +242,14 @@ export class BlobContainerTreeItem
 
 	public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
 		const message: string = `Are you sure you want to delete blob container '${this.label}' and all its contents?`;
+
 		const result = await context.ui.showWarningMessage(
 			message,
 			{ modal: true },
 			DialogResponses.deleteResponse,
 			DialogResponses.cancel,
 		);
+
 		if (result === DialogResponses.deleteResponse) {
 			const containerClient: ContainerClient =
 				await createBlobContainerClient(this.root, this.container.name);
@@ -251,6 +265,7 @@ export class BlobContainerTreeItem
 			IBlobContainerCreateChildContext,
 	): Promise<AzExtTreeItem> {
 		let child: AzExtTreeItem;
+
 		if (context.remoteFilePath && context.localFilePath) {
 			context.showCreatingTreeItem(context.remoteFilePath);
 			await this.uploadLocalFile(
@@ -258,6 +273,7 @@ export class BlobContainerTreeItem
 				context.localFilePath,
 				context.remoteFilePath,
 			);
+
 			const containerClient = await createBlobContainerClient(
 				this.root,
 				this.container.name,
@@ -287,6 +303,7 @@ export class BlobContainerTreeItem
 		}
 
 		AzureStorageFS.fireCreateEvent(child);
+
 		return child;
 	}
 
@@ -304,6 +321,7 @@ export class BlobContainerTreeItem
 		sourceFolderPath: string,
 	): Promise<void> {
 		const destBlobFolder = "";
+
 		const webEndpoint = await vscode.window.withProgress(
 			{
 				cancellable: true,
@@ -362,11 +380,13 @@ export class BlobContainerTreeItem
 				this.container.name,
 			),
 		);
+
 		const retries: number = 4;
 		await retry(
 			async (currentAttempt) => {
 				context.telemetry.properties.deployAttempt =
 					currentAttempt.toString();
+
 				if (currentAttempt > 1) {
 					const message: string = localize(
 						"retryingDeploy",
@@ -388,18 +408,22 @@ export class BlobContainerTreeItem
 
 					if (blobsToDelete.length) {
 						const message = `The storage container "${this.friendlyContainerName}" contains ${blobsToDelete.length} files. Deploying will delete all of these existing files.  Continue?`;
+
 						const deleteAndDeploy: vscode.MessageItem = {
 							title: "Delete and Deploy",
 						};
+
 						const result = await vscode.window.showWarningMessage(
 							message,
 							{ modal: true },
 							deleteAndDeploy,
 							DialogResponses.cancel,
 						);
+
 						if (result !== deleteAndDeploy) {
 							context.telemetry.properties.cancelStep =
 								"AreYouSureYouWantToDeleteExistingBlobs";
+
 							throw new UserCancelledError();
 						}
 					}
@@ -437,6 +461,7 @@ export class BlobContainerTreeItem
 				minTimeout: 2 * 1000,
 				onFailedAttempt: (error) => {
 					const parsedError: IParsedError = parseError(error);
+
 					if (
 						/server failed to authenticate/i.test(
 							parsedError.message,
@@ -453,6 +478,7 @@ export class BlobContainerTreeItem
 		);
 
 		const webEndpoint = this.getPrimaryWebEndpoint();
+
 		if (!webEndpoint) {
 			throw new Error(
 				`Could not obtain the primary web endpoint for ${this.root.storageAccountName}`,
@@ -482,6 +508,7 @@ export class BlobContainerTreeItem
 
 		const storageAccountTreeItem =
 			treeItem.parent && treeItem.parent.parent;
+
 		if (
 			storageAccountTreeItem &&
 			isResolvedStorageAccountTreeItem(storageAccountTreeItem)
@@ -503,12 +530,16 @@ export class BlobContainerTreeItem
 	): Promise<void> {
 		const containerClient: ContainerClient =
 			await createBlobContainerClient(this.root, this.container.name);
+
 		for (const blobIndex of blobsToDelete.keys()) {
 			const blob: BlobItem = blobsToDelete[blobIndex];
+
 			try {
 				ext.outputChannel.appendLog(`Deleting blob "${blob.name}"...`);
+
 				const response: BlobDeleteResponse =
 					await containerClient.deleteBlob(blob.name);
+
 				if (cancellationToken.isCancellationRequested) {
 					throw new UserCancelledError();
 				} else if (response.errorCode) {
@@ -523,6 +554,7 @@ export class BlobContainerTreeItem
 			} catch (error) {
 				if (parseError(error).isUserCancelledError) {
 					properties.cancelStep = "deleteBlobs";
+
 					throw error;
 				}
 

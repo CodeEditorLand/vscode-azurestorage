@@ -26,6 +26,7 @@ export function askOpenInStorageExplorer(
 		"openInSE",
 		"Open resource in Storage Explorer",
 	);
+
 	const items: string[] = platform() === "linux" ? [] : [message];
 	void window
 		.showErrorMessage(errorMessage, ...items)

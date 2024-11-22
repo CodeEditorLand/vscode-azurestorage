@@ -40,6 +40,7 @@ export class FileTreeItem
 	implements ICopyUrl, ITransferSrcOrDstTreeItem
 {
 	public parent: FileShareTreeItem | DirectoryTreeItem;
+
 	constructor(
 		parent: FileShareTreeItem | DirectoryTreeItem,
 		public readonly fileName: string,
@@ -74,6 +75,7 @@ export class FileTreeItem
 			services: "f", // file
 			resourceTypes: "co", // container, object
 		};
+
 		return this.root.generateSasToken(accountSASSignatureValues);
 	}
 
@@ -84,6 +86,7 @@ export class FileTreeItem
 			this.directoryPath,
 			this.fileName,
 		);
+
 		const url = fileClient.url;
 		await copyAndShowToast(url, "File URL");
 	}
@@ -92,6 +95,7 @@ export class FileTreeItem
 		context: IActionContext & IDirectoryDeleteContext,
 	): Promise<void> {
 		let result: MessageItem | undefined;
+
 		if (!context.suppressMessage) {
 			const message: string = `Are you sure you want to delete the file '${this.label}'?`;
 			result = await window.showWarningMessage(

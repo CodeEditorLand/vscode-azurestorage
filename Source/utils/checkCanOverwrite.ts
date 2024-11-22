@@ -29,6 +29,7 @@ export async function checkCanOverwrite(
 				context,
 				destPath,
 			);
+
 			switch (overwriteChoice.choice) {
 				case OverwriteChoice.no:
 				case OverwriteChoice.noToAll:
@@ -55,6 +56,7 @@ async function showDuplicateResourceWarning(
 		'A resource named "{0}" already exists. Do you want to overwrite it?',
 		resourceName,
 	);
+
 	const items = [
 		{
 			title: localize("yesToAll", "Yes to all"),
@@ -67,6 +69,7 @@ async function showDuplicateResourceWarning(
 		},
 		{ title: DialogResponses.no.title, data: OverwriteChoice.no },
 	];
+
 	return (
 		await context.ui.showWarningMessage(message, { modal: true }, ...items)
 	).data;

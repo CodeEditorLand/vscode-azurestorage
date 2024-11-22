@@ -15,6 +15,7 @@ import { ISasDownloadContext } from "./ISasDownloadContext";
 export class SasUrlPromptStep extends AzureWizardPromptStep<IActionContext> {
 	public async prompt(context: ISasDownloadContext): Promise<void> {
 		let value: string | undefined = await env.clipboard.readText();
+
 		if (await this.validateInput(context, value)) {
 			// if there is a string value here, then the clipboard does not contain a valid SAS url
 			value = undefined;

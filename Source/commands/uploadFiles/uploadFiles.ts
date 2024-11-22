@@ -38,10 +38,12 @@ export async function uploadFiles(
 		uris,
 		calledFromUploadToAzureStorage: !!uris?.length,
 	};
+
 	const wizardOptions: IWizardOptions<IUploadFilesWizardContext> = {
 		promptSteps: [new GetFileDestinationDirectoryStep()],
 		executeSteps: [new UploadFilesStep(cancellationToken)],
 	};
+
 	const wizard: AzureWizard<IUploadFilesWizardContext> = new AzureWizard(
 		wizardContext,
 		wizardOptions,
@@ -49,10 +51,12 @@ export async function uploadFiles(
 	await wizard.prompt();
 
 	const nUris: Uri[] = nonNullProp(wizardContext, "uris");
+
 	const nTreeItem: BlobContainerTreeItem | FileShareTreeItem = nonNullProp(
 		wizardContext,
 		"treeItem",
 	);
+
 	if (nUris.length === 1) {
 		wizardContext.activityTitle = localize(
 			"activityLogUploadFiles",
@@ -70,5 +74,6 @@ export async function uploadFiles(
 	}
 
 	await wizard.execute();
+
 	return wizardContext.resolution as IAzCopyResolution;
 }

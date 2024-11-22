@@ -9,6 +9,7 @@ import { localize } from "../../../utils/localize";
 import { IFileShareWizardContext } from "./IFileShareWizardContext";
 
 const minQuotaGB = 1;
+
 const maxQuotaGB = 5120;
 
 export class StorageQuotaPromptStep extends AzureWizardPromptStep<IFileShareWizardContext> {
@@ -33,6 +34,7 @@ export class StorageQuotaPromptStep extends AzureWizardPromptStep<IFileShareWiza
 
 	private validateQuota(input: string): string | undefined {
 		const value = Number(input);
+
 		if (isNaN(value)) {
 			return localize("quotaNum", "Value must be a number");
 		} else if (value < minQuotaGB || value > maxQuotaGB) {

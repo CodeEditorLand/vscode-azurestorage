@@ -16,18 +16,23 @@ export namespace treeUtils {
 		parentContextValues = Array.isArray(parentContextValues)
 			? parentContextValues
 			: [parentContextValues];
+
 		if (!parentContextValues.length) throw new NoResourceFoundError();
 
 		let currentNode: AzExtTreeItem = node;
+
 		let foundParent: boolean = false;
+
 		while (currentNode.parent) {
 			for (const contextValue of parentContextValues) {
 				const parentRegex: RegExp =
 					contextValue instanceof RegExp
 						? contextValue
 						: new RegExp(contextValue);
+
 				if (parentRegex.test(currentNode.contextValue)) {
 					foundParent = true;
+
 					break;
 				}
 			}
@@ -35,6 +40,7 @@ export namespace treeUtils {
 			currentNode = currentNode.parent;
 		}
 		if (!foundParent) throw new NoResourceFoundError();
+
 		return currentNode as T;
 	}
 }

@@ -133,8 +133,10 @@ export class AttachedStorageAccountTreeItem
 		// Does NOT update treeItem's _webHostingEnabled.
 		const serviceClient: BlobServiceClient =
 			await this.root.createBlobServiceClient();
+
 		const properties: ServiceGetPropertiesResponse =
 			await serviceClient.getProperties();
+
 		const staticWebsite: StaticWebsite | undefined =
 			properties.staticWebsite;
 
@@ -194,6 +196,7 @@ class AttachedStorageRoot extends AttachedAccountRoot {
 						this._connectionString,
 						"AccountKey",
 					);
+
 		if (!key) {
 			throw new Error(
 				localize(

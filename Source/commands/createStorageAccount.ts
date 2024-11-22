@@ -61,9 +61,11 @@ export async function createStorageAccount(
 			...(await createActivityContext()),
 		});
 	wizardContext.includeExtendedLocations = true;
+
 	const promptSteps: AzureWizardPromptStep<IStorageAccountWizardContext>[] = [
 		new StorageAccountNameStep(),
 	];
+
 	const executeSteps: AzureWizardExecuteStep<IStorageAccountWizardContext>[] =
 		[
 			new StorageAccountCreateStep({

@@ -19,11 +19,13 @@ export class BlobPathUtils {
 			const secondLastIndex = path
 				.slice(0, path.length - 1)
 				.lastIndexOf("/");
+
 			return secondLastIndex < 0
 				? ""
 				: `${path.slice(0, secondLastIndex)}/`;
 		} else {
 			const lastIndex = path.lastIndexOf("/");
+
 			return lastIndex < 0 ? "" : `${path.slice(0, lastIndex)}/`;
 		}
 	}
@@ -36,11 +38,13 @@ export class BlobPathUtils {
 	 */
 	public static basename(path: string): string {
 		const lastIndex = path.lastIndexOf("/");
+
 		if (lastIndex === path.length - 1) {
 			// path is a directory path
 			const secondLastIndex = path
 				.slice(0, path.length - 1)
 				.lastIndexOf("/");
+
 			return path.slice(secondLastIndex + 1);
 		} else {
 			// path is a blob path

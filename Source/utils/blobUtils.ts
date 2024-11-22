@@ -36,6 +36,7 @@ export async function createBlobContainerClient(
 ): Promise<ContainerClient> {
 	const blobServiceClient: BlobServiceClient =
 		await root.createBlobServiceClient();
+
 	return blobServiceClient.getContainerClient(containerName);
 }
 
@@ -46,6 +47,7 @@ export async function createBlobClient(
 ): Promise<BlobClient> {
 	const blobContainerClient: ContainerClient =
 		await createBlobContainerClient(root, containerName);
+
 	return blobContainerClient.getBlobClient(blobName);
 }
 
@@ -56,6 +58,7 @@ export async function createBlockBlobClient(
 ): Promise<BlockBlobClient> {
 	const blobContainerClient: ContainerClient =
 		await createBlobContainerClient(root, containerName);
+
 	return blobContainerClient.getBlockBlobClient(blobName);
 }
 
@@ -65,15 +68,18 @@ export async function loadMoreBlobChildren(
 ): Promise<{ children: AzExtTreeItem[]; continuationToken?: string }> {
 	const prefix: string | undefined =
 		parent instanceof BlobDirectoryTreeItem ? parent.dirPath : undefined;
+
 	const containerClient: ContainerClient = await createBlobContainerClient(
 		parent.root,
 		parent.container.name,
 	);
+
 	const settings: PageSettings = {
 		continuationToken,
 		// https://github.com/Azure/Azurite/issues/605
 		maxPageSize: parent.root.isEmulated ? maxPageSize * 10 : maxPageSize,
 	};
+
 	const response: AsyncIterableIterator<ContainerListBlobHierarchySegmentResponse> =
 		containerClient
 			.listBlobsByHierarchy(path.posix.sep, { prefix })
@@ -86,6 +92,7 @@ export async function loadMoreBlobChildren(
 	continuationToken = responseValue.continuationToken;
 
 	const children: AzExtTreeItem[] = [];
+
 	for (const blob of responseValue.segment.blobItems) {
 		// NOTE: `blob.name` as returned from Azure is actually the blob path in the container
 		const innerContainerClient = await createBlobContainerClient(
@@ -141,10 +148,12 @@ export async function createChildAsNewBlockBlob(
 				blobPath,
 				context?.contents || "",
 			);
+
 			const client = await createBlobContainerClient(
 				parent.root,
 				parent.container.name,
 			);
+
 			return new BlobTreeItem(
 				parent,
 				blobPath,
@@ -161,8 +170,10 @@ export async function createOrUpdateBlockBlob(
 	text?: string | Buffer,
 ): Promise<void> {
 	text = text ? text : "";
+
 	const contentLength: number =
 		text instanceof Buffer ? text.byteLength : text.length;
+
 	const containerClient: ContainerClient = await createBlobContainerClient(
 		parent.root,
 		parent.container.name,
@@ -194,6 +205,7 @@ export async function doesBlobExist(
 		treeItem.container.name,
 		blobPath,
 	);
+
 	return blobClient.exists();
 }
 
@@ -202,6 +214,7 @@ export async function doesBlobDirectoryExist(
 	blobDirectoryName: string,
 ): Promise<boolean> {
 	const sep: string = path.posix.sep;
+
 	if (!blobDirectoryName.endsWith(sep)) {
 		blobDirectoryName = `${blobDirectoryName}${sep}`;
 	}
@@ -210,6 +223,7 @@ export async function doesBlobDirectoryExist(
 		treeItem.root,
 		treeItem.container.name,
 	);
+
 	const response: AsyncIterableIterator<ContainerListBlobHierarchySegmentResponse> =
 		containerClient
 			.listBlobsByHierarchy(sep, { prefix: blobDirectoryName })
@@ -236,9 +250,11 @@ export async function getExistingProperties(
 		parent.container.name,
 		blobPath,
 	);
+
 	if (await blockBlobClient.exists()) {
 		const existingProperties: BlobGetPropertiesResponse =
 			await blockBlobClient.getProperties();
+
 		return {
 			metadata: existingProperties.metadata,
 			blobHTTPHeaders: {
@@ -268,6 +284,7 @@ export async function getBlobPath(
 		),
 		validateInput: async (name: string) => {
 			const nameError = BlobContainerTreeItem.validateBlobName(name);
+
 			if (nameError) {
 				return nameError;
 			} else if (await doesBlobExist(parent, name)) {

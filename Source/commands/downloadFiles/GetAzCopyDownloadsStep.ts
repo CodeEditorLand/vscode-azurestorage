@@ -52,13 +52,17 @@ export class GetAzCopyDownloadsStep extends AzureWizardExecuteStep<IDownloadWiza
 		treeItems: ITransferSrcOrDstTreeItem[] = [],
 	): Promise<void> {
 		const allFolderDownloads: DownloadItem[] = [];
+
 		const allFileDownloads: DownloadItem[] = [];
 
 		for (const treeItem of treeItems) {
 			// if there is no remoteFilePath, then it is the root
 			const remoteFilePath = treeItem.remoteFilePath ?? `${posix.sep}`;
+
 			const sasToken = treeItem.transferSasToken;
+
 			const resourceUri = treeItem.resourceUri;
+
 			if (treeItem instanceof BlobTreeItem) {
 				await treeItem.checkCanDownload(context);
 				allFileDownloads.push({
@@ -138,11 +142,14 @@ export class GetAzCopyDownloadsStep extends AzureWizardExecuteStep<IDownloadWiza
 		destinationFolder: string,
 	): Promise<void> {
 		const allFolderDownloads: DownloadItem[] = [];
+
 		const allFileDownloads: DownloadItem[] = [];
 
 		const url = new URL(nonNullProp(context, "sasUrl"));
+
 		const pathArgs = url.pathname.split("/");
 		pathArgs.shift();
+
 		const resourceName = pathArgs.shift();
 
 		const download: DownloadItem = {

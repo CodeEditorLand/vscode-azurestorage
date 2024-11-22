@@ -82,12 +82,14 @@ export class BlobContainerGroupTreeItem
 		}
 
 		let containersResponse: ListContainersSegmentResponse;
+
 		try {
 			containersResponse = await this.listContainers(
 				this._continuationToken,
 			);
 		} catch (error) {
 			const errorType: string = parseError(error).errorType;
+
 			if (this.root.isEmulated && errorType === "ECONNREFUSED") {
 				return [
 					new GenericTreeItem(this, {
@@ -134,6 +136,7 @@ export class BlobContainerGroupTreeItem
 	): Promise<ListContainersSegmentResponse> {
 		const blobServiceClient: BlobServiceClient =
 			await this.root.createBlobServiceClient();
+
 		const response: AsyncIterableIterator<ServiceListContainersSegmentResponse> =
 			blobServiceClient
 				.listContainers()
@@ -149,6 +152,7 @@ export class BlobContainerGroupTreeItem
 		const wizardContext: IActionContext & { name?: string } = {
 			...context,
 		};
+
 		const wizard = new AzureWizard(wizardContext, {
 			promptSteps: [new BlobContainerNameStep()],
 		});
@@ -163,6 +167,7 @@ export class BlobContainerGroupTreeItem
 				progress.report({
 					message: `Azure Storage: Creating blob container '${name}'`,
 				});
+
 				return await BlobContainerTreeItem.createBlobContainerTreeItem(
 					this,
 					await this.createBlobContainer(name),
@@ -182,10 +187,13 @@ export class BlobContainerGroupTreeItem
 
 		const containersResponse: ListContainersSegmentResponse =
 			await this.listContainers();
+
 		let createdContainer: ContainerItem | undefined;
+
 		for (const container of containersResponse.containerItems) {
 			if (container.name === name) {
 				createdContainer = container;
+
 				break;
 			}
 		}
