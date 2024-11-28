@@ -45,9 +45,13 @@ async function setAzCopyExePermissions(): Promise<void> {
 exports["webpack-dev"] = gulp.series(prepareForWebpack, () =>
 	gulp_webpack("development"),
 );
+
 exports["webpack-prod"] = gulp.series(prepareForWebpack, () =>
 	gulp_webpack("production"),
 );
+
 exports.preTest = gulp.series(gulp_installResourceGroups);
+
 exports.cleanReadme = cleanReadme;
+
 exports.setAzCopyExePermissions = setAzCopyExePermissions;
