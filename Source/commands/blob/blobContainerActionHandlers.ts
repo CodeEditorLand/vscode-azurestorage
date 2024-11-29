@@ -29,6 +29,7 @@ export function registerBlobContainerActionHandlers(): void {
 		"azureStorage.openBlobContainer",
 		openBlobContainerInStorageExplorer,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.editBlob",
 		async (context: IActionContext, treeItem: BlobTreeItem) => {
@@ -40,10 +41,12 @@ export function registerBlobContainerActionHandlers(): void {
 		},
 		250,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.deleteBlobContainer",
 		deleteBlobContainer,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.createBlockBlob",
 		async (context: IActionContext, parent: BlobContainerTreeItem) => {
@@ -101,6 +104,7 @@ export function registerBlobContainerActionHandlers(): void {
 					childName: blobPath,
 				})
 			);
+
 			await vscode.commands.executeCommand(
 				"azureStorage.editBlob",
 				childTreeItem,

@@ -58,7 +58,9 @@ export class FileShareTreeItem
 	implements ICopyUrl, ITransferSrcOrDstTreeItem
 {
 	public parent: FileShareGroupTreeItem;
+
 	private _continuationToken: string | undefined;
+
 	private _openInFileExplorerString: string = "Open in Explorer...";
 
 	constructor(
@@ -67,6 +69,7 @@ export class FileShareTreeItem
 		public readonly resourceUri: string,
 	) {
 		super(parent);
+
 		this.iconPath = {
 			light: path.join(getResourcesPath(), "light", "AzureFileShare.svg"),
 			dark: path.join(getResourcesPath(), "dark", "AzureFileShare.svg"),
@@ -93,7 +96,9 @@ export class FileShareTreeItem
 	}
 
 	public label: string = this.shareName;
+
 	public static contextValue: string = "azureFileShare";
+
 	public contextValue: string = FileShareTreeItem.contextValue;
 
 	hasMoreChildrenImpl(): boolean {
@@ -113,6 +118,7 @@ export class FileShareTreeItem
 			});
 
 			ti.commandArgs = [this];
+
 			result.push(ti);
 		}
 
@@ -122,7 +128,9 @@ export class FileShareTreeItem
 			continuationToken,
 		}: {
 			files: FileItem[];
+
 			directories: DirectoryItem[];
+
 			continuationToken: string;
 		} = await listFilesInDirectory(
 			"",
@@ -130,6 +138,7 @@ export class FileShareTreeItem
 			this.root,
 			this._continuationToken,
 		);
+
 		this._continuationToken = continuationToken;
 
 		const shareServiceClient = await this.root.createShareServiceClient();
@@ -178,6 +187,7 @@ export class FileShareTreeItem
 
 	public async copyUrl(): Promise<void> {
 		const url: string = this.getUrl();
+
 		await copyAndShowToast(url, "Share URL");
 	}
 
@@ -196,6 +206,7 @@ export class FileShareTreeItem
 				this.root,
 				this.shareName,
 			);
+
 			await shareClient.delete();
 		} else {
 			throw new UserCancelledError();
@@ -213,6 +224,7 @@ export class FileShareTreeItem
 
 		if (context.remoteFilePath && context.localFilePath) {
 			context.showCreatingTreeItem(context.remoteFilePath);
+
 			await this.uploadLocalFile(
 				context,
 				context.localFilePath,
@@ -221,6 +233,7 @@ export class FileShareTreeItem
 
 			const shareServiceClient: ShareServiceClient =
 				await this.root.createShareServiceClient();
+
 			child = new FileTreeItem(
 				this,
 				context.remoteFilePath,
@@ -243,6 +256,7 @@ export class FileShareTreeItem
 				context,
 			);
 		}
+
 		AzureStorageFS.fireCreateEvent(child);
 
 		return child;
@@ -278,6 +292,7 @@ export class FileShareTreeItem
 						this.shareName,
 						partialParentDirectoryPath,
 					);
+
 				await directoryClient.create();
 			}
 		}
@@ -290,6 +305,7 @@ export class FileShareTreeItem
 			remoteFilePath: destFilePath,
 			transferSasToken: this.transferSasToken,
 		};
+
 		await uploadFile(
 			context,
 			uploadItem,
@@ -301,5 +317,6 @@ export class FileShareTreeItem
 
 export interface IFileShareCreateChildContext extends IActionContext {
 	childType: string;
+
 	childName?: string;
 }

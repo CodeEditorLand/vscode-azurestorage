@@ -67,8 +67,11 @@ export class DirectoryTreeItem
 	}
 
 	private _continuationToken: string | undefined;
+
 	public label: string = this.directoryName;
+
 	public static contextValue: string = "azureFileShareDirectory";
+
 	public contextValue: string = DirectoryTreeItem.contextValue;
 
 	public get root(): IStorageRoot {
@@ -115,7 +118,9 @@ export class DirectoryTreeItem
 			continuationToken,
 		}: {
 			files: FileItem[];
+
 			directories: DirectoryItem[];
+
 			continuationToken: string;
 		} = await listFilesInDirectory(
 			this.fullPath,
@@ -123,6 +128,7 @@ export class DirectoryTreeItem
 			this.root,
 			this._continuationToken,
 		);
+
 		this._continuationToken = continuationToken;
 
 		const fileTreeItems: FileTreeItem[] = await Promise.all(
@@ -177,6 +183,7 @@ export class DirectoryTreeItem
 			);
 
 		const url = directoryClient.url;
+
 		await copyAndShowToast(url, "Directory URL");
 	}
 
@@ -200,6 +207,7 @@ export class DirectoryTreeItem
 				context,
 			);
 		}
+
 		AzureStorageFS.fireCreateEvent(child);
 
 		return child;
@@ -213,6 +221,7 @@ export class DirectoryTreeItem
 		if (!context.suppressMessage) {
 			// Note: Azure will fail the directory delete if it's not empty, so no need to ask about deleting contents
 			const message: string = `Are you sure you want to delete the directory '${this.label}' and all of its files and subdirectories?`;
+
 			result = await window.showWarningMessage(
 				message,
 				{ modal: true },
@@ -225,6 +234,7 @@ export class DirectoryTreeItem
 
 		if (result === DialogResponses.deleteResponse) {
 			ext.outputChannel.show();
+
 			await deleteDirectoryAndContents(
 				this.fullPath,
 				this.shareName,

@@ -56,6 +56,7 @@ export async function selectStorageAccountTreeItemForCommand(
 	const storageOrContainerTreeItem = <
 		(ResolvedStorageAccountTreeItem & AzExtTreeItem) | BlobContainerTreeItem
 	>treeItem;
+
 	assert(
 		isResolvedStorageAccountTreeItem(storageOrContainerTreeItem) ||
 			storageOrContainerTreeItem instanceof BlobContainerTreeItem,
@@ -71,6 +72,7 @@ export async function selectStorageAccountTreeItemForCommand(
 		);
 	} else {
 		assert(isResolvedStorageAccountTreeItem(storageOrContainerTreeItem));
+
 		accountTreeItem = <ResolvedStorageAccountTreeItem & AzExtTreeItem>(
 			treeItem
 		);
@@ -79,6 +81,7 @@ export async function selectStorageAccountTreeItemForCommand(
 	if (options.mustBeWebsiteCapable) {
 		const hostingStatus =
 			await accountTreeItem.getActualWebsiteHostingStatus();
+
 		await accountTreeItem.ensureHostingCapable(context, hostingStatus);
 
 		if (options.configureWebsite && !hostingStatus.enabled) {
@@ -95,6 +98,7 @@ export async function selectStorageAccountTreeItemForCommand(
 					{ modal: true },
 					{ title: enableWebHostingPrompt },
 				);
+
 				context.telemetry.properties.enableResponse = "true";
 			}
 

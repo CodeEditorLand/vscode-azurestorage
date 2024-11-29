@@ -75,6 +75,7 @@ export class WindowsStorageExplorerLauncher
 						// Parse from e.g.: "C:\Program Files (x86)\Microsoft Azure Storage Explorer\StorageExplorer.exe" -- "%1"
 						exePath = regVal.split('"')[1];
 					}
+
 					if (exePath && (await AzExtFsExtra.pathExists(exePath))) {
 						return exePath;
 					} else {
@@ -89,9 +90,12 @@ export class WindowsStorageExplorerLauncher
 							"cantFindSE",
 							"Cannot find a compatible Storage Explorer. Would you like to download the latest Storage Explorer?",
 						);
+
 						await context.ui.showWarningMessage(message, download);
+
 						context.telemetry.properties.downloadStorageExplorer =
 							"true";
+
 						await openUrl(storageExplorerDownloadUrl);
 
 						throw new UserCancelledError();
@@ -107,6 +111,7 @@ export class WindowsStorageExplorerLauncher
 	): Promise<string | undefined> {
 		return new Promise((resolve, reject) => {
 			const rgKey = new winreg({ hive, key });
+
 			rgKey.values((err?: {}, items?: Winreg.RegistryItem[]) => {
 				if (err) {
 					reject(err);
@@ -128,6 +133,7 @@ export class WindowsStorageExplorerLauncher
 		if (!storageExplorerExecutable) {
 			throw new UserCancelledError();
 		}
+
 		await Launcher.launch(storageExplorerExecutable, ...args);
 	}
 }

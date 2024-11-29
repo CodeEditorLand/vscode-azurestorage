@@ -36,18 +36,22 @@ export function registerStorageAccountActionHandlers(): void {
 		"azureStorage.openStorageAccount",
 		openStorageAccountInStorageExplorer,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.copyPrimaryKey",
 		copyPrimaryKey,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.copyConnectionString",
 		copyConnectionString,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.deployStaticWebsite",
 		deployStaticWebsite,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.deleteStorageAccount",
 		deleteStorageAccount,
@@ -90,6 +94,7 @@ export async function copyConnectionString(
 	}
 
 	const connectionString = treeItem.getConnectionString();
+
 	await copyAndShowToast(connectionString, "Connection string");
 }
 
@@ -119,12 +124,14 @@ export async function deployStaticWebsite(
 		}
 
 		sourcePath = target.fsPath;
+
 		context.telemetry.properties.contextValue = "Folder";
 	} else {
 		// Command called from command palette or from storage account/container treeItem
 		destTreeItem = <
 			(StorageAccountTreeItem & AzExtTreeItem) | BlobContainerTreeItem
 		>target;
+
 		context.telemetry.properties.contextValue =
 			(destTreeItem && destTreeItem.contextValue) || "CommandPalette";
 	}
@@ -167,6 +174,7 @@ async function runPreDeployTask(
 	const taskName: string | undefined = vscode.workspace
 		.getConfiguration(extensionPrefix, vscode.Uri.file(deployFsPath))
 		.get(configurationSettingsKeys.preDeployTask);
+
 	context.telemetry.properties.hasPreDeployTask = String(!!taskName);
 
 	if (taskName) {
@@ -178,6 +186,7 @@ async function runPreDeployTask(
 
 		if (preDeployTask) {
 			await vscode.tasks.executeTask(preDeployTask);
+
 			await new Promise(
 				(
 					resolve: (value?: unknown) => void,

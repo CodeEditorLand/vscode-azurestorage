@@ -45,6 +45,7 @@ export async function askAndCreateChildDirectory(
 		{ location: ProgressLocation.Window },
 		async (progress) => {
 			context.showCreatingTreeItem(dirName);
+
 			progress.report({
 				message: `Azure Storage: Creating directory '${path.posix.join(parentPath, dirName)}'`,
 			});
@@ -55,6 +56,7 @@ export async function askAndCreateChildDirectory(
 					shareName,
 					path.posix.join(parentPath, dirName),
 				);
+
 			await directoryClient.create();
 
 			return new DirectoryTreeItem(
@@ -75,7 +77,9 @@ export async function listFilesInDirectory(
 	currentToken?: string,
 ): Promise<{
 	files: FileItem[];
+
 	directories: DirectoryItem[];
+
 	continuationToken: string;
 }> {
 	const directoryClient: ShareDirectoryClient = await createDirectoryClient(
@@ -97,6 +101,7 @@ export async function listFilesInDirectory(
 	const files: FileItem[] = responseValue.segment.fileItems;
 
 	const directories: DirectoryItem[] = responseValue.segment.directoryItems;
+
 	currentToken = responseValue.continuationToken;
 
 	return { files, directories, continuationToken: currentToken };
@@ -118,7 +123,9 @@ export async function deleteDirectoryAndContents(
 			continuationToken,
 		}: {
 			files: FileItem[];
+
 			directories: DirectoryItem[];
+
 			continuationToken: string;
 		} = await listFilesInDirectory(
 			directory,
@@ -131,16 +138,20 @@ export async function deleteDirectoryAndContents(
 
 		for (const file of files) {
 			const promise = deleteFile(directory, file.name, shareName, root);
+
 			promises.push(promise);
+
 			ext.outputChannel.appendLog(
 				`Deleted file "${directory}/${file.name}"`,
 			);
 
 			if (promises.length >= parallelOperations) {
 				await Promise.all(promises);
+
 				promises = [];
 			}
 		}
+
 		await Promise.all(promises);
 
 		for (const dir of directories) {
@@ -163,7 +174,9 @@ export async function deleteDirectoryAndContents(
 		shareName,
 		directory,
 	);
+
 	await directoryClient.delete();
+
 	ext.outputChannel.appendLog(`Deleted directory "${directory}"`);
 }
 

@@ -15,6 +15,8 @@ export interface DeleteStorageAccountWizardContext
 	extends IActionContext,
 		ExecuteActivityContext {
 	resourceGroupName?: string;
+
 	storageAccount?: StorageAccountWrapper;
+
 	subscription: ISubscriptionContext;
 }

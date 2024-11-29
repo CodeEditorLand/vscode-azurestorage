@@ -58,6 +58,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 	private _onDidChangeFileEmitter: vscode.EventEmitter<
 		vscode.FileChangeEvent[]
 	> = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+
 	onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
 		this._onDidChangeFileEmitter.event;
 
@@ -112,9 +113,13 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 	private parseUri(uri: vscode.Uri): {
 		storageAccountId: string;
+
 		containerName: string;
+
 		blobPath: string;
+
 		parentDirPath: string;
+
 		baseName: string;
 	} {
 		const storageAccountId = this.getStorageAccountId(uri);
@@ -233,6 +238,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		accountKey?: string,
 	): Promise<{
 		fileSystemClient: DataLakeFileSystemClient;
+
 		pathClient: DataLakePathClient;
 	}> {
 		const { containerName, blobPath } = this.parseUri(uri);
@@ -263,6 +269,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			serviceClient.getFileSystemClient(containerName);
 
 		const pathUrl = new URL(dfsEndpoint);
+
 		pathUrl.pathname = `${containerName}/${blobPath}`;
 
 		const pathClient = new DataLakePathClient(
@@ -301,6 +308,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 		}
 
 		let matches: RegExpMatchArray | null = resourceId.match(idRegExp);
+
 		matches = nonNullValue(matches, "resourceIdMatches");
 
 		const rootId = matches[1];
@@ -356,10 +364,12 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			if (result === downloadInstead) {
 				await download(context, [treeItem]);
 			}
+
 			throw new UserCancelledError(message);
 		}
 
 		const doc = await vscode.workspace.openTextDocument(uri);
+
 		await vscode.window.showTextDocument(doc, {
 			preserveFocus: false,
 			preview: false,
@@ -375,6 +385,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 					// VSCode is expecting a FileNotFound error when creating new file/directory.
 					// If we don't rethrow the error, VSCode won't write the new file/directory.
 					context.errorHandling.rethrow = true;
+
 					context.errorHandling.suppressDisplay = true;
 
 					const { blobPath } = this.parseUri(uri);
@@ -435,9 +446,11 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 
 										const response =
 											listResult.value as ListBlobsFlatSegmentResponse;
+
 										hasBlobs =
 											response.segment.blobItems.length >
 											0;
+
 										continuationToken =
 											response.continuationToken;
 									} while (!hasBlobs && !!continuationToken);
@@ -450,10 +463,12 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 											type: vscode.FileType.Directory,
 										};
 									}
+
 									throw vscode.FileSystemError.FileNotFound(
 										uri,
 									);
 								}
+
 								return undefined;
 							}
 						} else {
@@ -486,6 +501,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 										uri,
 									);
 								}
+
 								throw error;
 							}
 						}
@@ -552,12 +568,14 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 						vscode.FileType.File,
 					]),
 				);
+
 				response.segment.blobPrefixes?.forEach((directory) =>
 					results.push([
 						BlobPathUtils.basename(directory.name),
 						vscode.FileType.Directory,
 					]),
 				);
+
 				continuationToken = response.continuationToken;
 
 				if (!continuationToken) {
@@ -574,6 +592,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			"azureStorageBlob.createDirectory",
 			async (context) => {
 				context.errorHandling.rethrow = true;
+
 				context.errorHandling.suppressDisplay = true;
 
 				const { storageAccount, accountKey } =
@@ -626,6 +645,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 			"azureStorageBlob.readFile",
 			async (context) => {
 				context.errorHandling.rethrow = true;
+
 				context.errorHandling.suppressDisplay = true;
 
 				try {
@@ -649,6 +669,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 					} else if (pe.errorType === "403") {
 						throw vscode.FileSystemError.NoPermissions(uri);
 					}
+
 					throw error;
 				}
 			},
@@ -710,6 +731,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 									),
 								});
 							}
+
 							await blobClient
 								.getBlockBlobClient()
 								.uploadData(content, {
@@ -728,6 +750,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 					} else if (pe.errorType === "403") {
 						throw vscode.FileSystemError.NoPermissions(uri);
 					}
+
 					throw error;
 				}
 			},
@@ -764,6 +787,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 						},
 						async (progress, cancellationToken) => {
 							const { baseName, blobPath } = this.parseUri(uri);
+
 							progress.report({
 								message: localize(
 									"deletingBlob",
@@ -819,6 +843,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 														.deleteIfExists();
 												},
 											);
+
 										continuationToken =
 											response.continuationToken;
 
@@ -841,6 +866,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 										storageAccount,
 										accountKey,
 									);
+
 								await pathClient.deleteIfExists();
 							}
 						},
@@ -851,6 +877,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 					if (pe.errorType === "403") {
 						throw vscode.FileSystemError.NoPermissions(uri);
 					}
+
 					throw error;
 				}
 			},
@@ -912,6 +939,7 @@ export class BlobContainerFS implements vscode.FileSystemProvider {
 						} else if (pe.errorType === "403") {
 							throw vscode.FileSystemError.NoPermissions(newUri);
 						}
+
 						throw error;
 					}
 				}

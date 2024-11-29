@@ -86,9 +86,11 @@ export async function askAndCreateEmptyTextFile(
 		{ location: ProgressLocation.Window },
 		async (progress) => {
 			context.showCreatingTreeItem(fileName);
+
 			progress.report({
 				message: `Azure Storage: Creating file '${fileName}'`,
 			});
+
 			await createFile(directoryPath, fileName, shareName, parent.root);
 
 			const fileClient: ShareFileClient = await createFileClient(
@@ -139,6 +141,7 @@ export async function getFileOrDirectoryName(
 					name,
 				);
 			}
+
 			return undefined;
 		},
 	});
@@ -181,7 +184,9 @@ export async function createFile(
 	);
 
 	options = options || {};
+
 	options.fileHttpHeaders = options.fileHttpHeaders || {};
+
 	options.fileHttpHeaders.fileContentType =
 		options.fileHttpHeaders.fileContentType ||
 		mime.getType(name) ||
@@ -210,12 +215,16 @@ export async function updateFileFromText(
 		shareName,
 		root,
 	);
+
 	options = options || {};
+
 	options.fileHttpHeaders = options.fileHttpHeaders || {};
+
 	options.fileHttpHeaders.fileContentType =
 		options.fileHttpHeaders.fileContentType ||
 		mime.getType(name) ||
 		undefined;
+
 	await fileClient.uploadData(Buffer.from(text), options);
 }
 
@@ -226,6 +235,7 @@ export async function deleteFile(
 	root: IStorageRoot,
 ): Promise<void> {
 	const fileClient = await createFileClient(root, share, directory, name);
+
 	await fileClient.delete();
 }
 
@@ -247,16 +257,23 @@ export async function getExistingCreateOptions(
 		await fileClient.getProperties();
 
 	const options: FileCreateOptions = {};
+
 	options.fileHttpHeaders = {};
+
 	options.fileHttpHeaders.fileCacheControl = propertiesResult.cacheControl;
+
 	options.fileHttpHeaders.fileContentDisposition =
 		propertiesResult.contentDisposition;
+
 	options.fileHttpHeaders.fileContentEncoding =
 		propertiesResult.contentEncoding;
+
 	options.fileHttpHeaders.fileContentLanguage =
 		propertiesResult.contentLanguage;
+
 	options.fileHttpHeaders.fileContentMD5 = undefined; // Don't allow the existing MD5 hash to be used for the updated file
 	options.fileHttpHeaders.fileContentType = propertiesResult.contentType;
+
 	options.metadata = propertiesResult.metadata;
 
 	return options;

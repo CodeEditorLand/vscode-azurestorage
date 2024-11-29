@@ -48,6 +48,7 @@ export async function uploadLocalFolder(
 		remoteFilePath: destPath,
 		transferSasToken: destTreeItem.transferSasToken,
 	};
+
 	await uploadFolder(
 		context,
 		uploadItem,
@@ -83,6 +84,7 @@ export function outputAndCopyUploadedFileUrls(
 			"Uploaded file URL: {0}",
 			`${parentUrl}/${fileUrl}`,
 		);
+
 		ext.outputChannel.appendLog(url);
 	}
 
@@ -112,6 +114,7 @@ export function outputAndCopyUploadedFileUrls(
 
 				if (shouldCopy) {
 					const lastFileUrl: string = `${parentUrl}/${fileUrls[fileUrls.length - 1]}`;
+
 					await copyAndShowToast(lastFileUrl, "File URL");
 				}
 			});
@@ -134,7 +137,9 @@ export function showUploadSuccessMessage(treeItemLabel: string): void {
 		'Successfully uploaded to "{0}"',
 		treeItemLabel,
 	);
+
 	ext.outputChannel.appendLog(success);
+
 	void vscode.window.showInformationMessage(success);
 }
 
@@ -184,6 +189,7 @@ export function convertLocalPathToRemotePath(
 		// This check is done after `posix.join()` because that function removes any duplicate slashes from the beginning of the path.
 		path = path.substr(1);
 	}
+
 	return path;
 }
 

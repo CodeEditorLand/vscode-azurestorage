@@ -28,6 +28,7 @@ export function throwIfCanceled(
 		if (properties && cancelStep) {
 			properties.cancelStep = cancelStep;
 		}
+
 		throw new UserCancelledError();
 	}
 }

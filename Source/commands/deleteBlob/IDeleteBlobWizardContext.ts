@@ -14,5 +14,6 @@ export interface IDeleteBlobWizardContext
 	extends IActionContext,
 		ExecuteActivityContext {
 	blobName?: string;
+
 	blob?: BlobTreeItem;
 }

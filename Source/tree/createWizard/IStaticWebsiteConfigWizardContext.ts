@@ -8,6 +8,8 @@ import { IStorageAccountWizardContext } from "@microsoft/vscode-azext-azureutils
 export interface IStaticWebsiteConfigWizardContext
 	extends IStorageAccountWizardContext {
 	enableStaticWebsite: boolean;
+
 	indexDocument: string;
+
 	errorDocument404Path: string;
 }

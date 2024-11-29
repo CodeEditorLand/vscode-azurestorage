@@ -24,6 +24,7 @@ export class TableTreeItem extends AzExtTreeItem implements IStorageTreeItem {
 		public readonly tableName: string,
 	) {
 		super(parent);
+
 		this.iconPath = {
 			light: path.join(getResourcesPath(), "light", "AzureTable.svg"),
 			dark: path.join(getResourcesPath(), "dark", "AzureTable.svg"),
@@ -35,7 +36,9 @@ export class TableTreeItem extends AzExtTreeItem implements IStorageTreeItem {
 	}
 
 	public label: string = this.tableName;
+
 	public static contextValue: string = "azureTable";
+
 	public contextValue: string = TableTreeItem.contextValue;
 
 	public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
@@ -51,6 +54,7 @@ export class TableTreeItem extends AzExtTreeItem implements IStorageTreeItem {
 		if (result === DialogResponses.deleteResponse) {
 			const tableServiceClient =
 				await this.root.createTableServiceClient();
+
 			await tableServiceClient.deleteTable(this.tableName);
 		} else {
 			throw new UserCancelledError();

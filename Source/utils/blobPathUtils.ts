@@ -69,6 +69,7 @@ export class BlobPathUtils {
 		if (endsWithSlash(path)) {
 			return path.slice(0, path.length - 1);
 		}
+
 		return path;
 	}
 
@@ -79,6 +80,7 @@ export class BlobPathUtils {
 		if (!endsWithSlash(path)) {
 			return path + "/";
 		}
+
 		return path;
 	}
 }

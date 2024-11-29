@@ -8,8 +8,11 @@ import { ext } from "./extensionVariables";
 
 export class TransferProgress {
 	private message: string = "";
+
 	private percentage: number = 0;
+
 	private lastPercentage: number = 0;
+
 	private lastUpdated: number = Date.now();
 
 	constructor(
@@ -34,6 +37,7 @@ export class TransferProgress {
 					increment: this.percentage - this.lastPercentage,
 				});
 			}
+
 			this.postReport();
 		}
 	}
@@ -44,6 +48,7 @@ export class TransferProgress {
 		if (this.percentage !== this.lastPercentage) {
 			ext.outputChannel.appendLog(this.message);
 		}
+
 		this.postReport();
 	}
 
@@ -53,11 +58,13 @@ export class TransferProgress {
 		const prefix: string = this.messagePrefix
 			? `${this.messagePrefix}: `
 			: "";
+
 		this.message = `${prefix}${finishedWork}/${totalWork} ${this.units} (${this.percentage}%)`;
 	}
 
 	private postReport(): void {
 		this.lastPercentage = this.percentage;
+
 		this.lastUpdated = Date.now();
 	}
 }

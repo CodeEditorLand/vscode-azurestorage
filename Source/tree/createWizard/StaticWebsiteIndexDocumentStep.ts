@@ -11,10 +11,12 @@ import { IStaticWebsiteConfigWizardContext } from "./IStaticWebsiteConfigWizardC
 
 export class StaticWebsiteIndexDocumentStep extends AzureWizardPromptStep<IStaticWebsiteConfigWizardContext> {
 	static readonly defaultIndexDocument: string = "index.html";
+
 	private oldIndexDocument: string | undefined;
 
 	public constructor(oldIndexDocument?: string) {
 		super();
+
 		this.oldIndexDocument = oldIndexDocument;
 	}
 

@@ -31,6 +31,7 @@ export class GetFileDestinationDirectoryStep extends AzureWizardPromptStep<IUplo
 				openLabel: upload,
 			});
 		}
+
 		context.treeItem =
 			context.treeItem ||
 			(await ext.rgApi.pickAppResource<

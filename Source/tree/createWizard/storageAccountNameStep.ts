@@ -27,6 +27,7 @@ export class StorageAccountNameStep<
 		const suggestedName: string | undefined = context.relatedNameTask
 			? await context.relatedNameTask
 			: undefined;
+
 		context.newStorageAccountName = (
 			await context.ui.showInputBox({
 				value: suggestedName,
@@ -37,6 +38,7 @@ export class StorageAccountNameStep<
 					await this.validateStorageAccountName(client, value),
 			})
 		).trim();
+
 		context.valuesToMask.push(context.newStorageAccountName);
 
 		if (!context.relatedNameTask) {

@@ -36,9 +36,12 @@ export namespace treeUtils {
 					break;
 				}
 			}
+
 			if (foundParent) break;
+
 			currentNode = currentNode.parent;
 		}
+
 		if (!foundParent) throw new NoResourceFoundError();
 
 		return currentNode as T;

@@ -22,6 +22,7 @@ export async function detachStorageAccount(
 	}
 
 	await ext.attachedStorageAccountsTreeItem.detach(treeItem);
+
 	await ext.rgApi.workspaceResourceTree.refresh(
 		actionContext,
 		ext.attachedStorageAccountsTreeItem,

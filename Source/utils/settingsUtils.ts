@@ -18,6 +18,7 @@ export async function updateWorkspaceSetting<T = string>(
 ): Promise<void> {
 	const projectConfiguration: WorkspaceConfiguration =
 		workspace.getConfiguration(prefix, Uri.file(fsPath));
+
 	await projectConfiguration.update(section, value);
 }
 

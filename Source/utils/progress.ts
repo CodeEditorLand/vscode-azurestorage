@@ -44,6 +44,7 @@ export async function awaitWithProgress<T>(
 
 		if (nextChannelUpdate <= 0) {
 			nextChannelUpdate = uiUpdatesPerChannelUpdate;
+
 			ext.outputChannel.appendLog(`${title}: ${msg}`);
 		}
 
@@ -62,6 +63,7 @@ function pollDuringPromise<T>(
 	poll: () => void,
 ): void {
 	let inProgress = true;
+
 	promise.then(
 		() => {
 			inProgress = false;

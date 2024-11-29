@@ -27,6 +27,7 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 		wizardContext: IDeleteBlobDirectoryWizardContext,
 		progress: Progress<{
 			message?: string | undefined;
+
 			increment?: number | undefined;
 		}>,
 	): Promise<void> {
@@ -37,7 +38,9 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 			'Deleting directory "{0}"...',
 			directoryName,
 		);
+
 		ext.outputChannel.appendLog(deletingBlobDirectory);
+
 		progress.report({ message: deletingBlobDirectory });
 
 		const errors: boolean = await this.deleteFolder(wizardContext);
@@ -50,6 +53,7 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 			const viewOutput: MessageItem = { title: "View Errors" };
 
 			const errorMessage: string = `Errors occurred when deleting "${directoryName}".`;
+
 			void window
 				.showWarningMessage(errorMessage, viewOutput)
 				.then((result: MessageItem | undefined) => {
@@ -62,11 +66,13 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 				`Errors occurred when deleting "${directoryName}".`,
 			);
 		}
+
 		const deleteSuccessful: string = localize(
 			"successfullyDeletedBlobDirectory",
 			'Successfully deleted directory "{0}".',
 			directoryName,
 		);
+
 		ext.outputChannel.appendLog(deleteSuccessful);
 
 		if (!wizardContext.suppressNotification) {
@@ -103,6 +109,7 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 						ext.outputChannel.appendLog(
 							`Cannot delete ${child.blobPath}. ${parseError(error).message}`,
 						);
+
 						errors = true;
 					}
 				} else if (child instanceof BlobDirectoryTreeItem) {
@@ -112,6 +119,7 @@ export class DeleteBlobDirectoryStep extends AzureWizardExecuteStep<IDeleteBlobD
 
 			dirPath = dirPaths.pop();
 		}
+
 		return errors;
 	}
 }

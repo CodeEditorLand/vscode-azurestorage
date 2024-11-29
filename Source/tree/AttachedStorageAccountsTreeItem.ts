@@ -32,21 +32,29 @@ interface IPersistedAccount {
 
 export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 	public readonly contextValue: string = "attachedStorageAccounts";
+
 	public readonly label: string = "Attached Storage Accounts";
+
 	public childTypeLabel: string = "Account";
 
 	private _root: ISubscriptionContext;
+
 	private _attachedAccounts: AttachedStorageAccountTreeItem[] | undefined;
+
 	private _loadPersistedAccountsTask: Promise<
 		AttachedStorageAccountTreeItem[]
 	>;
+
 	private readonly _serviceName: string =
 		"ms-azuretools.vscode-azurestorage.connectionStrings2";
 
 	constructor(parent: AzExtParentTreeItem) {
 		super(parent);
+
 		this.id = "attachedStorageAccounts";
+
 		this._root = new AttachedAccountRoot();
+
 		this._loadPersistedAccountsTask = this.loadPersistedAccounts();
 	}
 
@@ -67,6 +75,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 	): Promise<AzExtTreeItem[]> {
 		if (clearCache) {
 			this._attachedAccounts = undefined;
+
 			this._loadPersistedAccountsTask = this.loadPersistedAccounts();
 		}
 
@@ -99,6 +108,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 		await this.attachAccount(
 			this.createTreeItem(connectionString, accountName),
 		);
+
 		await ext.rgApi.workspaceResourceTree.refresh(
 			context,
 			ext.attachedStorageAccountsTreeItem,
@@ -117,7 +127,9 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 
 		if (index !== -1) {
 			attachedAccounts.splice(index, 1);
+
 			await ext.context.secrets.delete(this.getAccountKey(treeItem));
+
 			await this.persistIds(attachedAccounts);
 		}
 	}
@@ -165,6 +177,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 					this.getAccountKey(treeItem),
 					treeItem.getConnectionString(),
 				);
+
 				await this.persistIds(attachedAccounts);
 			}
 		}
@@ -185,6 +198,7 @@ export class AttachedStorageAccountsTreeItem extends AzExtParentTreeItem {
 			const accounts: IPersistedAccount[] = <IPersistedAccount[]>(
 				JSON.parse(value)
 			);
+
 			await Promise.all(
 				accounts.map(async (account) => {
 					connectionString = <string>(

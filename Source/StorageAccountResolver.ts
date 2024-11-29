@@ -29,7 +29,9 @@ import { StorageAccountWrapper } from "./utils/storageWrappers";
 
 export interface ResolvedStorageAccount extends ResolvedAppResourceBase {
 	label: string;
+
 	root: IStorageRoot;
+
 	storageAccount: StorageAccountWrapper;
 
 	getWebsiteCapableContainer(
@@ -41,22 +43,29 @@ export interface ResolvedStorageAccount extends ResolvedAppResourceBase {
 	setWebsiteHostingProperties(
 		properties: BlobServiceProperties,
 	): Promise<void>;
+
 	ensureHostingCapable(
 		context: IActionContext,
 		hostingStatus: WebsiteHostingStatus,
 	): Promise<void>;
+
 	configureStaticWebsite(context: IActionContext): Promise<void>;
+
 	disableStaticWebsite(context: IActionContext): Promise<void>;
+
 	browseStaticWebsite(context: IActionContext): Promise<void>;
+
 	kind: "microsoft.storage/storageaccounts";
 }
 
 export class StorageAccountResolver implements AppResourceResolver {
 	private storageAccountCacheLastUpdated = 0;
+
 	private storageAccountCache: Map<string, StorageAccount> = new Map<
 		string,
 		StorageAccount
 	>();
+
 	private listStorageAccountsTask: Promise<void> | undefined;
 
 	public async resolveResource(
@@ -76,9 +85,11 @@ export class StorageAccountResolver implements AppResourceResolver {
 					Date.now() - 1000 * 3
 				) {
 					this.storageAccountCacheLastUpdated = Date.now();
+
 					this.listStorageAccountsTask = new Promise(
 						(resolve, reject) => {
 							this.storageAccountCache.clear();
+
 							uiUtils
 								.listAllIterator(
 									storageManagementClient.storageAccounts.list(),
@@ -99,6 +110,7 @@ export class StorageAccountResolver implements AppResourceResolver {
 											);
 										}
 									}
+
 									resolve();
 								})
 								.catch((reason) => {

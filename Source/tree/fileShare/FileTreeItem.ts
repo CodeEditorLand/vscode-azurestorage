@@ -49,11 +49,14 @@ export class FileTreeItem
 		public readonly resourceUri: string,
 	) {
 		super(parent);
+
 		this.commandId = "azureStorage.editFile";
 	}
 
 	public label: string = this.fileName;
+
 	public static contextValue: string = "azureFile";
+
 	public contextValue: string = FileTreeItem.contextValue;
 
 	public get root(): IStorageRoot {
@@ -88,6 +91,7 @@ export class FileTreeItem
 		);
 
 		const url = fileClient.url;
+
 		await copyAndShowToast(url, "File URL");
 	}
 
@@ -98,6 +102,7 @@ export class FileTreeItem
 
 		if (!context.suppressMessage) {
 			const message: string = `Are you sure you want to delete the file '${this.label}'?`;
+
 			result = await window.showWarningMessage(
 				message,
 				{ modal: true },

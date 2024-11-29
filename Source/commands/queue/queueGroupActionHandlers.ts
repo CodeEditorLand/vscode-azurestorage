@@ -29,5 +29,6 @@ export async function createQueue(
 	if (treeItem?.root.isEmulated && !(await isAzuriteInstalled())) {
 		warnAzuriteNotInstalled(context);
 	}
+
 	await createChildNode(context, QueueGroupTreeItem.contextValue, treeItem);
 }

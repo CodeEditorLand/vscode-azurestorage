@@ -21,7 +21,9 @@ export class StaticWebsiteConfigureStep extends AzureWizardExecuteStep<
 	IStorageAccountTreeItemCreateContext & IStaticWebsiteConfigWizardContext
 > {
 	public priority: number = 200;
+
 	public accountTreeItem: StorageAccountTreeItem | undefined;
+
 	private previouslyEnabled: boolean | undefined;
 
 	public constructor(
@@ -29,7 +31,9 @@ export class StaticWebsiteConfigureStep extends AzureWizardExecuteStep<
 		previouslyEnabled?: boolean,
 	) {
 		super();
+
 		this.accountTreeItem = accountTreeItem;
+
 		this.previouslyEnabled = previouslyEnabled;
 	}
 
@@ -69,12 +73,14 @@ export class StaticWebsiteConfigureStep extends AzureWizardExecuteStep<
 					'The storage account "{0}" has been enabled for static website hosting.',
 					this.accountTreeItem.label,
 				);
+
 		msg += localize(
 			"indexDocumentAndErrorDocument",
 			' Index document: "{0}", 404 error document: "{1}"',
 			wizardContext.indexDocument,
 			wizardContext.errorDocument404Path,
 		);
+
 		void window.showInformationMessage(msg);
 
 		if (

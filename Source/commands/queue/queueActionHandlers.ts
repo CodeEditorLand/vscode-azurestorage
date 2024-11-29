@@ -17,6 +17,7 @@ export function registerQueueActionHandlers(): void {
 		"azureStorage.openQueue",
 		openQueueInStorageExplorer,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.deleteQueue",
 		deleteQueue,

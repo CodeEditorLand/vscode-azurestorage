@@ -19,6 +19,7 @@ export class DestinationPromptStep extends AzureWizardPromptStep<IActionContext>
 			"selectFolderForDownload",
 			"Select destination folder for download",
 		);
+
 		context.destinationFolder = await showWorkspaceFoldersQuickPick(
 			placeHolderString,
 			context,

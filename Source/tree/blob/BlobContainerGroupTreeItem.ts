@@ -42,9 +42,13 @@ export class BlobContainerGroupTreeItem
 	private _continuationToken: string | undefined;
 
 	public label: string = "Blob Containers";
+
 	public readonly childTypeLabel: string = "Blob Container";
+
 	public static contextValue: string = "azureBlobContainerGroup";
+
 	public contextValue: string = BlobContainerGroupTreeItem.contextValue;
+
 	public parent:
 		| (StorageAccountTreeItem & AzExtParentTreeItem)
 		| AttachedStorageAccountTreeItem;
@@ -56,6 +60,7 @@ export class BlobContainerGroupTreeItem
 			| AttachedStorageAccountTreeItem,
 	) {
 		super(parent);
+
 		this.iconPath = {
 			light: path.join(
 				getResourcesPath(),
@@ -156,6 +161,7 @@ export class BlobContainerGroupTreeItem
 		const wizard = new AzureWizard(wizardContext, {
 			promptSteps: [new BlobContainerNameStep()],
 		});
+
 		await wizard.prompt();
 
 		const name = nonNullProp(wizardContext, "name");
@@ -164,6 +170,7 @@ export class BlobContainerGroupTreeItem
 			{ location: vscode.ProgressLocation.Window },
 			async (progress) => {
 				context.showCreatingTreeItem(name);
+
 				progress.report({
 					message: `Azure Storage: Creating blob container '${name}'`,
 				});
@@ -183,6 +190,7 @@ export class BlobContainerGroupTreeItem
 	private async createBlobContainer(name: string): Promise<ContainerItem> {
 		const containerClient: ContainerClient =
 			await createBlobContainerClient(this.root, name);
+
 		await containerClient.create();
 
 		const containersResponse: ListContainersSegmentResponse =

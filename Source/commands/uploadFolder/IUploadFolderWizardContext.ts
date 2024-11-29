@@ -17,8 +17,12 @@ export interface IUploadFolderWizardContext
 	extends IActionContext,
 		ExecuteActivityContext {
 	calledFromUploadToAzureStorage: boolean;
+
 	destinationDirectory?: string;
+
 	resolution?: IAzCopyResolution;
+
 	treeItem?: BlobContainerTreeItem | FileShareTreeItem;
+
 	uri?: Uri;
 }

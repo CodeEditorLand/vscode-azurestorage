@@ -66,6 +66,7 @@ export async function showWorkspaceFoldersQuickPick(
 	});
 
 	const folderQuickPickOption = { placeHolder: placeHolderString };
+
 	context.telemetry.properties.cancelStep = "showWorkspaceFolders";
 
 	const pickedItem = await context.ui.showQuickPick(

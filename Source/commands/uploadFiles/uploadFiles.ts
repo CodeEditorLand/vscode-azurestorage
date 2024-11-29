@@ -48,6 +48,7 @@ export async function uploadFiles(
 		wizardContext,
 		wizardOptions,
 	);
+
 	await wizard.prompt();
 
 	const nUris: Uri[] = nonNullProp(wizardContext, "uris");

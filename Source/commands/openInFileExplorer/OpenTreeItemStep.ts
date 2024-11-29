@@ -13,6 +13,7 @@ import { IOpenInFileExplorerWizardContext } from "./IOpenInFileExplorerWizardCon
 
 export class OpenTreeItemStep extends AzureWizardExecuteStep<IOpenInFileExplorerWizardContext> {
 	public priority: number = 250;
+
 	public hideStepCount: boolean = true;
 
 	public async execute(
@@ -59,6 +60,7 @@ export class OpenTreeItemStep extends AzureWizardExecuteStep<IOpenInFileExplorer
 				workspace.updateWorkspaceFolders(openFolders.length, 0, {
 					uri: uriByService,
 				});
+
 				await commands.executeCommand("workbench.view.explorer");
 			} else {
 				await commands.executeCommand(
@@ -79,6 +81,7 @@ export class OpenTreeItemStep extends AzureWizardExecuteStep<IOpenInFileExplorer
 				workspace.updateWorkspaceFolders(openFolders.length, 0, {
 					uri: uri,
 				});
+
 				await commands.executeCommand("workbench.view.explorer");
 			} else {
 				await commands.executeCommand(

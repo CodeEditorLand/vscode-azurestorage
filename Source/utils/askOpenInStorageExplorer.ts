@@ -28,11 +28,13 @@ export function askOpenInStorageExplorer(
 	);
 
 	const items: string[] = platform() === "linux" ? [] : [message];
+
 	void window
 		.showErrorMessage(errorMessage, ...items)
 		.then(async (result) => {
 			if (result === message) {
 				context.telemetry.properties.openInStorageExplorer = "true";
+
 				await storageExplorerLauncher.openResource(
 					resourceId,
 					subscriptionId,

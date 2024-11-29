@@ -24,10 +24,12 @@ export interface IStorageAccountTreeItemCreateContext
 
 export class StorageAccountTreeItemCreateStep extends AzureWizardExecuteStep<IStorageAccountTreeItemCreateContext> {
 	public priority: number = 170;
+
 	public subscription: ISubscriptionContext;
 
 	public constructor(subscription: ISubscriptionContext) {
 		super();
+
 		this.subscription = subscription;
 	}
 
@@ -36,6 +38,7 @@ export class StorageAccountTreeItemCreateStep extends AzureWizardExecuteStep<ISt
 	): Promise<void> {
 		const storageManagementClient =
 			await createStorageClient(wizardContext);
+
 		wizardContext.accountTreeItem =
 			await StorageAccountTreeItem.createStorageAccountTreeItem(
 				this.subscription,
@@ -50,6 +53,7 @@ export class StorageAccountTreeItemCreateStep extends AzureWizardExecuteStep<ISt
 			name: wizardContext.accountTreeItem.storageAccount.name,
 			type: wizardContext.accountTreeItem.storageAccount.type,
 		};
+
 		wizardContext.activityResult = appResource;
 	}
 

@@ -60,6 +60,7 @@ export async function createStorageAccount(
 			...treeItem.subscription,
 			...(await createActivityContext()),
 		});
+
 	wizardContext.includeExtendedLocations = true;
 
 	const promptSteps: AzureWizardPromptStep<IStorageAccountWizardContext>[] = [
@@ -79,6 +80,7 @@ export async function createStorageAccount(
 			new StaticWebsiteConfigureStep(),
 			new VerifyProvidersStep([storageProvider]),
 		];
+
 	LocationListStep.addProviderForFiltering(
 		wizardContext,
 		storageProvider,
@@ -87,9 +89,11 @@ export async function createStorageAccount(
 
 	if (context.advancedCreation) {
 		promptSteps.push(new ResourceGroupListStep());
+
 		promptSteps.push(new StaticWebsiteEnableStep());
 	} else {
 		executeSteps.push(new ResourceGroupCreateStep());
+
 		Object.assign(wizardContext, {
 			enableStaticWebsite: wizardContext.isCustomCloud ? false : true,
 			indexDocument: wizardContext.isCustomCloud
@@ -102,6 +106,7 @@ export async function createStorageAccount(
 	}
 
 	LocationListStep.addStep(wizardContext, promptSteps);
+
 	LocationListStep.getQuickPickDescription = (location: AzExtLocation) => {
 		return location.metadata?.regionCategory === "Extended"
 			? localize(
@@ -128,6 +133,7 @@ export async function createStorageAccount(
 		wizardContext,
 		"newStorageAccountName",
 	);
+
 	wizardContext.activityTitle = localize(
 		"createStorageAccount",
 		'Create storage account "{0}"',

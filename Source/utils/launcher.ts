@@ -17,6 +17,7 @@ export class Launcher {
 			);
 			// remove those env vars
 			delete spawnEnv.ATOM_SHELL_INTERNAL_RUN_AS_NODE;
+
 			delete spawnEnv.ELECTRON_RUN_AS_NODE;
 
 			const childProcess = spawn(command, args, {
@@ -25,6 +26,7 @@ export class Launcher {
 
 			childProcess.stdout.on("data", (chunk) => {
 				resolve();
+
 				console.log(`child process message:  ${chunk}`);
 			});
 

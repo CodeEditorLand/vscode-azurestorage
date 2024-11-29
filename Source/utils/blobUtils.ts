@@ -89,6 +89,7 @@ export async function loadMoreBlobChildren(
 	const responseValue: ListBlobsHierarchySegmentResponse = (
 		await response.next()
 	).value;
+
 	continuationToken = responseValue.continuationToken;
 
 	const children: AzExtTreeItem[] = [];
@@ -99,6 +100,7 @@ export async function loadMoreBlobChildren(
 			parent.root,
 			blob.name,
 		);
+
 		children.push(
 			new BlobTreeItem(
 				parent,
@@ -115,6 +117,7 @@ export async function loadMoreBlobChildren(
 			parent.root,
 			directory.name,
 		);
+
 		children.push(
 			new BlobDirectoryTreeItem(
 				parent,
@@ -140,9 +143,11 @@ export async function createChildAsNewBlockBlob(
 		{ location: vscode.ProgressLocation.Window },
 		async (progress) => {
 			context.showCreatingTreeItem(blobPath);
+
 			progress.report({
 				message: `Azure Storage: Creating block blob '${blobPath}'`,
 			});
+
 			await createOrUpdateBlockBlob(
 				parent,
 				blobPath,
@@ -181,8 +186,11 @@ export async function createOrUpdateBlockBlob(
 
 	let properties: BlockBlobUploadOptions | undefined =
 		await getExistingProperties(parent, name);
+
 	properties = properties || {};
+
 	properties.blobHTTPHeaders = properties.blobHTTPHeaders || {};
+
 	properties.blobHTTPHeaders.blobContentType =
 		properties.blobHTTPHeaders.blobContentType ||
 		mime.getType(name) ||
@@ -301,6 +309,8 @@ export async function getBlobPath(
 
 export interface IBlobContainerCreateChildContext extends IActionContext {
 	childType: string;
+
 	childName: string;
+
 	contents?: Buffer;
 }

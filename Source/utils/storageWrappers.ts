@@ -15,9 +15,13 @@ import { nonNullProp } from "@microsoft/vscode-azext-utils";
  */
 export class StorageAccountWrapper {
 	constructor(private readonly _account: StorageAccount) {}
+
 	readonly id: string = nonNullProp(this._account, "id");
+
 	readonly name: string = nonNullProp(this._account, "name");
+
 	readonly type: string = nonNullProp(this._account, "type");
+
 	readonly primaryEndpoints: Endpoints = nonNullProp(
 		this._account,
 		"primaryEndpoints",
@@ -29,6 +33,8 @@ export class StorageAccountWrapper {
  */
 export class StorageAccountKeyWrapper {
 	constructor(private readonly _key: StorageAccountKey) {}
+
 	readonly value = nonNullProp(this._key, "value");
+
 	readonly keyName = nonNullProp(this._key, "keyName");
 }

@@ -88,7 +88,9 @@ export class AzureStorageFS
 {
 	private _emitter: vscode.EventEmitter<vscode.FileChangeEvent[]> =
 		new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+
 	private _bufferedEvents: vscode.FileChangeEvent[] = [];
+
 	private _fireSoonHandle?: NodeJS.Timer;
 
 	private _queryCache: Map<string, { query: string; invalid?: boolean }> =
@@ -121,11 +123,13 @@ export class AzureStorageFS
 		}
 
 		let matches: RegExpMatchArray | null = resourceId.match(idRegExp);
+
 		matches = nonNullValue(matches, "resourceIdMatches");
 
 		const rootId = matches[1];
 
 		const rootName = path.basename(rootId);
+
 		filePath = filePath || matches[2];
 
 		return vscode.Uri.parse(
@@ -181,10 +185,12 @@ export class AzureStorageFS
 			if (result === downloadInstead) {
 				await download(context, [treeItem]);
 			}
+
 			throw new UserCancelledError(message);
 		}
 
 		const doc = await vscode.workspace.openTextDocument(uri);
+
 		await vscode.window.showTextDocument(doc, {
 			preserveFocus: false,
 			preview: false,
@@ -263,6 +269,7 @@ export class AzureStorageFS
 									treeItem.container.name,
 									treeItem.blobPath,
 								);
+
 							props = await blockBlobClient.getProperties();
 						} else if (treeItem instanceof FileTreeItem) {
 							const fileClient: ShareFileClient =
@@ -272,6 +279,7 @@ export class AzureStorageFS
 									treeItem.directoryPath,
 									treeItem.fileName,
 								);
+
 							props = await fileClient.getProperties();
 						}
 					} catch (error) {
@@ -284,6 +292,7 @@ export class AzureStorageFS
 								vscode.FileSystemError.FileNotFound,
 							);
 						}
+
 						throw error;
 					}
 
@@ -291,7 +300,9 @@ export class AzureStorageFS
 						props?.createdOn?.valueOf() ||
 						props?.fileCreatedOn?.valueOf() ||
 						0;
+
 					mtime = props?.lastModified?.valueOf() || 0;
+
 					size = props?.contentLength || 0;
 
 					return { type: fileType, ctime, mtime, size };
@@ -412,6 +423,7 @@ export class AzureStorageFS
 			parsedUri.resourceId,
 			parsedUri.parentDirPath,
 		);
+
 		await parent.createChild(<IFileShareCreateChildContext>{
 			...context,
 			childType: "azureFileShareDirectory",
@@ -459,6 +471,7 @@ export class AzureStorageFS
 				childType: "azureBlobDirectory",
 				childName: matches[1],
 			});
+
 			matches = matches[2].match("^([^/]+)/?(.*?)$");
 		}
 	}
@@ -495,6 +508,7 @@ export class AzureStorageFS
 								parsedUri.parentDirPath,
 								parsedUri.baseName,
 							);
+
 							buffer = await client.downloadToBuffer();
 						} else {
 							client = await createBlobClient(
@@ -502,8 +516,10 @@ export class AzureStorageFS
 								treeItem.container.name,
 								parsedUri.filePath,
 							);
+
 							buffer = await client.downloadToBuffer();
 						}
+
 						return buffer;
 					} catch (error) {
 						const pe = parseError(error);
@@ -515,6 +531,7 @@ export class AzureStorageFS
 								vscode.FileSystemError.FileNotFound,
 							);
 						}
+
 						throw error;
 					}
 				},
@@ -541,7 +558,9 @@ export class AzureStorageFS
 				if (uri.path.endsWith("/")) {
 					// https://github.com/microsoft/vscode-azurestorage/issues/576
 					context.errorHandling.rethrow = true;
+
 					context.errorHandling.suppressDisplay = true;
+
 					void vscode.commands.executeCommand(
 						"workbench.files.action.refreshFilesExplorer",
 					); // Show any parent directories that may have already been created
@@ -561,6 +580,7 @@ export class AzureStorageFS
 
 				try {
 					await this.lookup(uri, context);
+
 					childExists = true;
 				} catch {
 					childExists = false;
@@ -684,6 +704,7 @@ export class AzureStorageFS
 	): Promise<void> {
 		await callWithTelemetryAndErrorHandling("delete", async (context) => {
 			context.errorHandling.rethrow = true;
+
 			context.errorHandling.suppressDisplay = true;
 
 			if (!options.recursive) {
@@ -700,6 +721,7 @@ export class AzureStorageFS
 				parsedUri.resourceId,
 				parsedUri.filePath,
 			);
+
 			await vscode.window.withProgress(
 				{ location: vscode.ProgressLocation.Notification },
 				async (progress) => {
@@ -766,7 +788,9 @@ export class AzureStorageFS
 	): Promise<AzureStorageTreeItem> {
 		if (!resourceId || !filePath) {
 			const parsedUri = this.parseUri(uri);
+
 			resourceId = parsedUri.resourceId;
+
 			filePath = parsedUri.filePath;
 		}
 
@@ -793,6 +817,7 @@ export class AzureStorageFS
 
 		this._fireSoonHandle = setTimeout(() => {
 			this._emitter.fire(this._bufferedEvents);
+
 			this._bufferedEvents.length = 0; // clear buffer
 		}, 5);
 	}
@@ -868,6 +893,7 @@ export class AzureStorageFS
 				if (endSearchEarly) {
 					return treeItem;
 				}
+
 				throw getFileSystemError(
 					uri,
 					context,
@@ -884,6 +910,7 @@ export class AzureStorageFS
 				} else if (element instanceof BlobDirectoryTreeItem) {
 					return element.dirName === childName;
 				}
+
 				return false;
 			});
 
@@ -891,6 +918,7 @@ export class AzureStorageFS
 				if (endSearchEarly) {
 					return treeItem;
 				}
+
 				throw getFileSystemError(
 					uri,
 					context,
@@ -933,6 +961,7 @@ export class AzureStorageFS
 						appResourceId,
 						{ ...context, loadAll: true },
 					)) as unknown as { resolve: () => Promise<void> };
+
 				await appResource.resolve();
 			}
 		} catch {
@@ -1034,6 +1063,7 @@ export class AzureStorageFS
 
 	private parseUri(uri: vscode.Uri): IParsedUri {
 		const rootName = this.getRootName(uri);
+
 		uri = this.verifyUri(uri, rootName);
 
 		const parsedQuery: querystring.ParsedUrlQuery = querystring.parse(
@@ -1045,6 +1075,7 @@ export class AzureStorageFS
 		const filePath: string = uri.path.replace(rootName, "");
 
 		let parentDirPath = path.dirname(filePath);
+
 		parentDirPath = parentDirPath === "." ? "" : parentDirPath;
 
 		const baseName = path.basename(filePath);
@@ -1101,7 +1132,9 @@ function getFileSystemError(
 	fsError: (messageOrUri?: string | vscode.Uri) => vscode.FileSystemError,
 ): vscode.FileSystemError {
 	context.telemetry.suppressAll = true;
+
 	context.errorHandling.rethrow = true;
+
 	context.errorHandling.suppressDisplay = true;
 
 	return fsError(uri);

@@ -13,7 +13,9 @@ export async function copyAndShowToast(
 	name?: string,
 ): Promise<void> {
 	await env.clipboard.writeText(text);
+
 	ext.outputChannel.show();
+
 	ext.outputChannel.appendLog(
 		localize("copiedClipboard", "{1} copied to clipboard: {0}", text, name),
 	);

@@ -27,7 +27,9 @@ export async function deleteFilesAndDirectories(
 	// Covers both single selection and an edge case where the node you delete from isn't part of the selection
 	if (!selection.some((s) => s === treeItem)) {
 		await ext.rgApi.appResourceTreeView.reveal(treeItem);
+
 		await treeItem.deleteTreeItem(context);
+
 		await parentContainer.refresh(context);
 
 		return;
@@ -48,12 +50,15 @@ export async function deleteFilesAndDirectories(
 				break;
 			}
 		}
+
 		if (shouldSkip) continue;
 
 		if (isTreeItemDirectory(node)) {
 			dirPaths.push(node.fullId);
 		}
+
 		await node.deleteTreeItem(context);
 	}
+
 	await parentContainer.refresh(context);
 }

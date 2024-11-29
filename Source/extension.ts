@@ -42,21 +42,29 @@ export async function activate(
 	perfStats ||= { loadStartTime: Date.now(), loadEndTime: Date.now() };
 
 	ext.context = context;
+
 	ext.ignoreBundle = ignoreBundle;
+
 	ext.outputChannel = createAzExtOutputChannel("Azure Storage", ext.prefix);
+
 	context.subscriptions.push(ext.outputChannel);
+
 	registerUIExtensionVariables(ext);
+
 	registerAzureUtilsExtensionVariables(ext);
 
 	await callWithTelemetryAndErrorHandling(
 		"activate",
 		async (activateContext: IActionContext) => {
 			activateContext.telemetry.properties.isActivationEvent = "true";
+
 			activateContext.telemetry.measurements.mainFileLoad =
 				(perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
 			ext.azureStorageFS = new AzureStorageFS();
+
 			ext.azureStorageWorkspaceFS = new AzureStorageFS();
+
 			context.subscriptions.push(
 				vscode.workspace.registerFileSystemProvider(
 					"azurestorage",
@@ -64,6 +72,7 @@ export async function activate(
 					{ isCaseSensitive: true },
 				),
 			);
+
 			context.subscriptions.push(
 				vscode.workspace.registerFileSystemProvider(
 					"azurestorageblob",
@@ -71,6 +80,7 @@ export async function activate(
 					{ isCaseSensitive: true },
 				),
 			);
+
 			context.subscriptions.push(
 				vscode.workspace.registerTextDocumentContentProvider(
 					"azurestorage",
@@ -82,6 +92,7 @@ export async function activate(
 			registerErrorHandler(
 				(c) => (c.errorHandling.suppressReportIssue = true),
 			);
+
 			registerReportIssueCommand("azureStorage.reportIssue");
 
 			registerCommands();
@@ -94,7 +105,9 @@ export async function activate(
 			if (rgApiProvider) {
 				const api =
 					rgApiProvider.getApi<AzureHostExtensionApi>("0.0.1");
+
 				ext.rgApi = api;
+
 				api.registerApplicationResourceResolver(
 					AzExtResourceType.StorageAccounts,
 					new StorageAccountResolver(),
@@ -109,6 +122,7 @@ export async function activate(
 				const storageWorkspaceProvider = new StorageWorkspaceProvider(
 					workspaceRootTreeItem,
 				);
+
 				ext.rgApi.registerWorkspaceResourceProvider(
 					"storageEmulator",
 					storageWorkspaceProvider,

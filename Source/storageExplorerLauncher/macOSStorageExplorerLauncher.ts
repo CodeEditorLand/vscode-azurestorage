@@ -54,6 +54,7 @@ export class MacOSStorageExplorerLauncher implements IStorageExplorerLauncher {
 						if (selected === "Browse") {
 							const userSelectedAppLocation =
 								await MacOSStorageExplorerLauncher.showOpenDialog();
+
 							await vscode.workspace
 								.getConfiguration("azureStorage")
 								.update(
@@ -69,6 +70,7 @@ export class MacOSStorageExplorerLauncher implements IStorageExplorerLauncher {
 							if (selected === "Download") {
 								context.telemetry.properties.downloadStorageExplorer =
 									"true";
+
 								await openUrl(storageExplorerDownloadUrl);
 							}
 
@@ -117,6 +119,7 @@ export class MacOSStorageExplorerLauncher implements IStorageExplorerLauncher {
 		if (!storageExplorerExecutable) {
 			throw new UserCancelledError();
 		}
+
 		return Launcher.launch(
 			"open",
 			...["-a", storageExplorerExecutable].concat(extraArgs),

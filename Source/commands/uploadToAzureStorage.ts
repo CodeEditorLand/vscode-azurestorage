@@ -141,6 +141,7 @@ export async function uploadToAzureStorage(
 	const errors: IParsedError[] = [];
 
 	const title: string = getUploadingMessage(treeItem.label);
+
 	await vscode.window.withProgress(
 		{
 			cancellable: true,
@@ -154,6 +155,7 @@ export async function uploadToAzureStorage(
 					context.telemetry.properties,
 					"uploadToAzureStorage",
 				);
+
 				errors.push(
 					...(
 						await uploadFolder(

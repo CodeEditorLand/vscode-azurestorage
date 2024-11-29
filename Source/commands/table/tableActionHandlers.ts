@@ -17,6 +17,7 @@ export function registerTableActionHandlers(): void {
 		"azureStorage.openTable",
 		openTableInStorageExplorer,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.deleteTable",
 		deleteTable,

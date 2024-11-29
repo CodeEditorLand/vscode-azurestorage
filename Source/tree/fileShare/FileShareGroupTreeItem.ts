@@ -39,9 +39,13 @@ export class FileShareGroupTreeItem
 	private _continuationToken: string | undefined;
 
 	public label: string = "File Shares";
+
 	public readonly childTypeLabel: string = "File Share";
+
 	public static contextValue: string = "azureFileShareGroup";
+
 	public contextValue: string = FileShareGroupTreeItem.contextValue;
+
 	public parent:
 		| (ResolvedAppResourceTreeItem<ResolvedStorageAccount> &
 				AzExtParentTreeItem)
@@ -54,6 +58,7 @@ export class FileShareGroupTreeItem
 			| AttachedStorageAccountTreeItem,
 	) {
 		super(parent);
+
 		this.iconPath = {
 			light: path.join(getResourcesPath(), "light", "AzureFileShare.svg"),
 			dark: path.join(getResourcesPath(), "dark", "AzureFileShare.svg"),
@@ -99,6 +104,7 @@ export class FileShareGroupTreeItem
 		}
 
 		const shares: ShareItem[] = responseValue.shareItems || [];
+
 		this._continuationToken = responseValue.continuationToken;
 
 		return shares.map((share: ShareItem) => {
@@ -128,6 +134,7 @@ export class FileShareGroupTreeItem
 			title: localize("createFileShare", "Create File Share"),
 			promptSteps,
 		});
+
 		await wizard.prompt();
 
 		const shareName = nonNullProp(wizardContext, "name");
@@ -138,6 +145,7 @@ export class FileShareGroupTreeItem
 			{ location: ProgressLocation.Window },
 			async (progress) => {
 				context.showCreatingTreeItem(shareName);
+
 				progress.report({
 					message: localize(
 						"creatingFileShare",
@@ -148,6 +156,7 @@ export class FileShareGroupTreeItem
 
 				const shareServiceClient: ShareServiceClient =
 					await this.root.createShareServiceClient();
+
 				await shareServiceClient.createShare(shareName, { quota });
 
 				return new FileShareTreeItem(

@@ -22,6 +22,7 @@ export class DeleteStorageAccountStep extends AzureWizardExecuteStep<DeleteStora
 		wizardContext: DeleteStorageAccountWizardContext,
 		progress: Progress<{
 			message?: string | undefined;
+
 			increment?: number | undefined;
 		}>,
 	): Promise<void> {
@@ -45,7 +46,9 @@ export class DeleteStorageAccountStep extends AzureWizardExecuteStep<DeleteStora
 		const resourceGroupName = parsedId.resourceGroups;
 
 		ext.outputChannel.appendLog(deletingStorageAccount);
+
 		progress.report({ message: deletingStorageAccount });
+
 		await storageManagementClient.storageAccounts.delete(
 			resourceGroupName,
 			storageAccount.name,
@@ -56,7 +59,9 @@ export class DeleteStorageAccountStep extends AzureWizardExecuteStep<DeleteStora
 			'Successfully deleted storage account "{0}".',
 			storageAccount.name,
 		);
+
 		ext.outputChannel.appendLog(deleteSuccessful);
+
 		void window.showInformationMessage(deleteSuccessful);
 	}
 

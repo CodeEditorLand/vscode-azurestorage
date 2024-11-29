@@ -18,6 +18,7 @@ export async function generateSasUrl(
 	const sasToken = treeItem.transferSasToken;
 
 	const sasUrl: string = `${resourceUri}${posix.sep}${treeItem.remoteFilePath}?${sasToken}`;
+
 	await copyAndShowToast(sasUrl, "SAS Token and URL");
 
 	return sasUrl;

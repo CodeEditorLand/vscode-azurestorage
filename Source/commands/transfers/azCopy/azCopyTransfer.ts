@@ -32,6 +32,7 @@ import { localize } from "../../../utils/localize";
 
 interface ITransferLocation {
 	src: AzCopyLocation;
+
 	dst: AzCopyLocation;
 }
 
@@ -66,6 +67,7 @@ export async function azCopyTransfer(
 		notificationProgress,
 		cancellationToken,
 	);
+
 	handleJob(context, jobInfo, src.path);
 }
 
@@ -75,6 +77,7 @@ function handleJob(
 	transferLabel: string,
 ): void {
 	const finalTransferStatus: AzCopyTransferStatus = jobInfo.latestStatus;
+
 	context.telemetry.properties.jobStatus = finalTransferStatus?.JobStatus;
 
 	if (!finalTransferStatus || finalTransferStatus.JobStatus !== "Completed") {
@@ -106,6 +109,7 @@ function handleJob(
 					ext.outputChannel.appendLog(`\t${failedTransfer.Dst}`);
 				}
 			}
+
 			if (finalTransferStatus.SkippedTransfers?.length) {
 				ext.outputChannel.appendLog(
 					localize("skippedTransfers", "Skipped transfer(s):"),
@@ -138,6 +142,7 @@ function handleJob(
 
 		if (jobInfo.logFileLocation) {
 			const uri: Uri = Uri.file(jobInfo.logFileLocation);
+
 			ext.outputChannel.appendLog(
 				localize("logFile", "Log file: {0}", uri.toString()),
 			);
@@ -185,12 +190,14 @@ async function startAndWaitForTransfer(
 			context.telemetry.properties,
 			"startAndWaitForTransfer",
 		);
+
 		status = (await copyClient.getJobInfo(jobId)).latestStatus;
 
 		totalWork =
 			(displayWorkAsTotalTransfers
 				? status?.TotalTransfers
 				: status?.TotalBytesEnumerated) || undefined;
+
 		finishedWork =
 			(displayWorkAsTotalTransfers
 				? status?.TransfersCompleted
@@ -208,6 +215,7 @@ async function startAndWaitForTransfer(
 				);
 			}
 		}
+
 		await delay(1000);
 	}
 

@@ -10,6 +10,7 @@ import { AttachedStorageAccountTreeItem } from "./AttachedStorageAccountTreeItem
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 	public childTypeLabel: string = "Storage Account";
+
 	public supportsAdvancedCreation: boolean = true;
 
 	private _nextLink: string | undefined;
@@ -21,6 +22,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 		if (clearCache) {
 			this._nextLink = undefined;
 		}
+
 		return [];
 	}
 

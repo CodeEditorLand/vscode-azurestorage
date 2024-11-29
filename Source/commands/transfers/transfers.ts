@@ -26,11 +26,17 @@ import { IDownloadWizardContext } from "../downloadFiles/IDownloadWizardContext"
 
 export type DownloadItem = {
 	type: "blob" | "file";
+
 	remoteFileName: string;
+
 	remoteFilePath: string;
+
 	localFilePath: string;
+
 	isDirectory: boolean;
+
 	resourceUri: string;
+
 	sasToken: string;
 };
 
@@ -87,8 +93,11 @@ export async function downloadFoldersAndFiles(
 			'Downloading to "{0}"...',
 			context.destinationFolder,
 		);
+
 		context.activityTitle = inProgressMessage;
+
 		ext.outputChannel.appendLog(inProgressMessage);
+
 		notificationProgress?.report({ message: inProgressMessage });
 
 		for (const item of itemsToDownload) {
@@ -108,18 +117,26 @@ export async function downloadFoldersAndFiles(
 			'Downloaded to "{0}".',
 			context.destinationFolder,
 		);
+
 		context.activityTitle = downloadedMessage;
+
 		notificationProgress?.report({ message: downloadedMessage });
+
 		ext.outputChannel.appendLog(downloadedMessage);
 	}
 }
 
 export type UploadItem = {
 	type: "blob" | "file";
+
 	localFilePath: string;
+
 	resourceName: string;
+
 	resourceUri: string;
+
 	remoteFilePath: string;
+
 	transferSasToken: string;
 };
 
@@ -233,6 +250,7 @@ async function startAzCopyDownload(
 		units,
 		item.remoteFileName,
 	);
+
 	await azCopyTransfer(
 		context,
 		fromTo,
@@ -272,6 +290,7 @@ async function startAzCopyFileUpload(
 		"bytes",
 		item.remoteFilePath,
 	);
+
 	await azCopyTransfer(
 		context,
 		item.type === "file" ? "LocalFile" : "LocalBlob",
@@ -300,12 +319,14 @@ async function startAzCopyFolderUpload(
 
 	if (await isEmptyDirectory(item.localFilePath)) {
 		useWildCard = false;
+
 		item.remoteFilePath = dirname(item.remoteFilePath);
 
 		if (item.remoteFilePath === ".") {
 			item.remoteFilePath = "";
 		}
 	}
+
 	const fromTo: FromToOption =
 		item.type === "blob" ? "LocalBlob" : "LocalFile";
 
@@ -325,6 +346,7 @@ async function startAzCopyFolderUpload(
 		"files",
 		messagePrefix || item.remoteFilePath,
 	);
+
 	await azCopyTransfer(
 		context,
 		fromTo,

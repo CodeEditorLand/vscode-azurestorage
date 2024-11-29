@@ -7,5 +7,6 @@ import { IActionContext } from "@microsoft/vscode-azext-utils";
 
 export interface IFileShareWizardContext extends IActionContext {
 	name?: string;
+
 	quota?: number;
 }

@@ -78,8 +78,11 @@ export class BlobContainerTreeItem
 	implements ICopyUrl, ITransferSrcOrDstTreeItem
 {
 	private _continuationToken: string | undefined;
+
 	private _websiteHostingEnabled: boolean;
+
 	private _openInFileExplorerString: string = "Open in Explorer...";
+
 	public parent: BlobContainerGroupTreeItem;
 
 	private constructor(
@@ -145,7 +148,9 @@ export class BlobContainerTreeItem
 	}
 
 	public label: string = this.container.name;
+
 	public static contextValue: string = "azureBlobContainer";
+
 	public contextValue: string = BlobContainerTreeItem.contextValue;
 
 	public hasMoreChildrenImpl(): boolean {
@@ -167,6 +172,7 @@ export class BlobContainerTreeItem
 			});
 
 			ti.commandArgs = [this];
+
 			result.push(ti);
 		}
 
@@ -174,6 +180,7 @@ export class BlobContainerTreeItem
 			this,
 			this._continuationToken,
 		);
+
 		this._continuationToken = continuationToken;
 
 		return result.concat(children);
@@ -197,6 +204,7 @@ export class BlobContainerTreeItem
 		const hostingStatus = await (<StorageAccountTreeItem>(
 			this!.parent!.parent
 		)).getActualWebsiteHostingStatus();
+
 		this._websiteHostingEnabled = hostingStatus.enabled;
 	}
 
@@ -222,6 +230,7 @@ export class BlobContainerTreeItem
 		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			throwIfCanceled(cancellationToken, properties, "listAllBlobs");
+
 			response = containerClient
 				.listBlobsFlat()
 				.byPage({ continuationToken: currentToken, maxPageSize: 5000 });
@@ -230,6 +239,7 @@ export class BlobContainerTreeItem
 			responseValue = (await response.next()).value;
 
 			blobs.push(...responseValue.segment.blobItems);
+
 			currentToken = responseValue.continuationToken;
 
 			if (!currentToken) {
@@ -253,6 +263,7 @@ export class BlobContainerTreeItem
 		if (result === DialogResponses.deleteResponse) {
 			const containerClient: ContainerClient =
 				await createBlobContainerClient(this.root, this.container.name);
+
 			await containerClient.delete();
 		}
 
@@ -268,6 +279,7 @@ export class BlobContainerTreeItem
 
 		if (context.remoteFilePath && context.localFilePath) {
 			context.showCreatingTreeItem(context.remoteFilePath);
+
 			await this.uploadLocalFile(
 				context,
 				context.localFilePath,
@@ -278,6 +290,7 @@ export class BlobContainerTreeItem
 				this.root,
 				this.container.name,
 			);
+
 			child = new BlobTreeItem(
 				this,
 				context.remoteFilePath,
@@ -292,6 +305,7 @@ export class BlobContainerTreeItem
 				this.root,
 				this.container.name,
 			);
+
 			child = new BlobDirectoryTreeItem(
 				this,
 				context.childName,
@@ -313,6 +327,7 @@ export class BlobContainerTreeItem
 
 	public async copyUrl(): Promise<void> {
 		const url: string = this.getUrl();
+
 		await copyAndShowToast(url, "Container URL");
 	}
 
@@ -341,6 +356,7 @@ export class BlobContainerTreeItem
 		const browseWebsite: vscode.MessageItem = {
 			title: "Browse to website",
 		};
+
 		void vscode.window
 			.showInformationMessage(
 				`Deployment complete. The primary web endpoint is ${webEndpoint}`,
@@ -382,6 +398,7 @@ export class BlobContainerTreeItem
 		);
 
 		const retries: number = 4;
+
 		await retry(
 			async (currentAttempt) => {
 				context.telemetry.properties.deployAttempt =
@@ -394,6 +411,7 @@ export class BlobContainerTreeItem
 						currentAttempt,
 						retries + 1,
 					);
+
 					ext.outputChannel.appendLog(message);
 				}
 
@@ -404,6 +422,7 @@ export class BlobContainerTreeItem
 				) {
 					// Find existing blobs
 					let blobsToDelete: BlobItem[] = [];
+
 					blobsToDelete = await this.listAllBlobs(cancellationToken);
 
 					if (blobsToDelete.length) {
@@ -433,6 +452,7 @@ export class BlobContainerTreeItem
 						"blobs",
 						"Deleting",
 					);
+
 					await this.deleteBlobs(
 						blobsToDelete,
 						transferProgress,
@@ -472,6 +492,7 @@ export class BlobContainerTreeItem
 					} else if (parsedError.isUserCancelledError) {
 						ext.outputChannel.appendLog("Deployment canceled.");
 					}
+
 					throw error;
 				},
 			},
@@ -580,6 +601,7 @@ export class BlobContainerTreeItem
 			remoteFilePath: blobPath,
 			transferSasToken: this.transferSasToken,
 		};
+
 		await uploadFile(
 			context,
 			uploadItem,
@@ -592,9 +614,11 @@ export class BlobContainerTreeItem
 		if (!name) {
 			return "Blob name cannot be empty";
 		}
+
 		if (name.length < 1 || name.length > 1024) {
 			return "Blob name must contain between 1 and 1024 characters";
 		}
+
 		if (/[/\\.]$/.test(name)) {
 			return "Avoid blob names that end with a forward or backward slash or a period.";
 		}

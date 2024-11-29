@@ -30,6 +30,7 @@ export class GetFolderDestinationDirectoryStep extends AzureWizardPromptStep<IUp
 				})
 			)[0];
 		}
+
 		context.treeItem =
 			context.treeItem ||
 			(await ext.rgApi.pickAppResource<
@@ -41,6 +42,7 @@ export class GetFolderDestinationDirectoryStep extends AzureWizardPromptStep<IUp
 					FileShareTreeItem.contextValue,
 				],
 			}));
+
 		context.destinationDirectory = await getDestinationDirectory(
 			context,
 			context.destinationDirectory,

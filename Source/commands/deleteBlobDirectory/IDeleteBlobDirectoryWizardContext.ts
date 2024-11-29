@@ -14,5 +14,6 @@ export interface IDeleteBlobDirectoryWizardContext
 	extends IActionContext,
 		ExecuteActivityContext {
 	dirName?: string;
+
 	blobDirectory?: BlobDirectoryTreeItem;
 }

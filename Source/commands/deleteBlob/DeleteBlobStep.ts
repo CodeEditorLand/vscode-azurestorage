@@ -22,6 +22,7 @@ export class DeleteBlobStep extends AzureWizardExecuteStep<IDeleteBlobWizardCont
 		wizardContext: IDeleteBlobWizardContext,
 		progress: Progress<{
 			message?: string | undefined;
+
 			increment?: number | undefined;
 		}>,
 	): Promise<void> {
@@ -34,7 +35,9 @@ export class DeleteBlobStep extends AzureWizardExecuteStep<IDeleteBlobWizardCont
 			'Deleting blob "{0}"...',
 			blobName,
 		);
+
 		ext.outputChannel.appendLog(deletingBlob);
+
 		progress.report({ message: deletingBlob });
 
 		const blobClient: BlobClient = await createBlobClient(
@@ -42,6 +45,7 @@ export class DeleteBlobStep extends AzureWizardExecuteStep<IDeleteBlobWizardCont
 			blob.container.name,
 			blob.blobPath,
 		);
+
 		await blobClient.delete();
 
 		const deleteSuccessful: string = localize(
@@ -49,6 +53,7 @@ export class DeleteBlobStep extends AzureWizardExecuteStep<IDeleteBlobWizardCont
 			'Successfully deleted blob "{0}".',
 			blobName,
 		);
+
 		ext.outputChannel.appendLog(deleteSuccessful);
 
 		if (!wizardContext.suppressNotification) {

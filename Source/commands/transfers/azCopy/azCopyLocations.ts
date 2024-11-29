@@ -13,6 +13,7 @@ export function createAzCopyLocalLocation(
 	if (isFolder && !path.endsWith(sep)) {
 		path += sep;
 	}
+
 	return { type: "Local", path, useWildCard: !!isFolder };
 }
 

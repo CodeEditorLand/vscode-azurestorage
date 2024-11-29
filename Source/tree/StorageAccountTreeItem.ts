@@ -69,8 +69,11 @@ polyfill();
 
 export type WebsiteHostingStatus = {
 	capable: boolean;
+
 	enabled: boolean;
+
 	indexDocument?: string;
+
 	errorDocument404Path?: string;
 };
 
@@ -91,15 +94,23 @@ export class StorageAccountTreeItem
 {
 	public static kind: "microsoft.storage/storageaccounts" =
 		"microsoft.storage/storageaccounts";
+
 	public readonly kind = StorageAccountTreeItem.kind;
+
 	public key: StorageAccountKeyWrapper;
+
 	public childTypeLabel: string = "resource type";
+
 	public autoSelectInTreeItemPicker: boolean = true;
 
 	private _blobContainerGroupTreeItem: BlobContainerGroupTreeItem;
+
 	private _fileShareGroupTreeItem: FileShareGroupTreeItem;
+
 	private _queueGroupTreeItem: QueueGroupTreeItem;
+
 	private _tableGroupTreeItem: TableGroupTreeItem;
+
 	private _root: IStorageRoot;
 
 	private constructor(
@@ -131,7 +142,9 @@ export class StorageAccountTreeItem
 	}
 
 	public label: string = this.storageAccount.name;
+
 	public static contextValue: string = "azureStorageAccount";
+
 	public contextValuesToAdd: string[] = [StorageAccountTreeItem.contextValue];
 
 	// eslint-disable-next-line @typescript-eslint/require-await
@@ -140,14 +153,17 @@ export class StorageAccountTreeItem
 			this as unknown as AzExtParentTreeItem &
 				ResolvedAppResourceTreeItem<ResolvedStorageAccount>,
 		);
+
 		this._fileShareGroupTreeItem = new FileShareGroupTreeItem(
 			this as unknown as AzExtParentTreeItem &
 				ResolvedAppResourceTreeItem<ResolvedStorageAccount>,
 		);
+
 		this._queueGroupTreeItem = new QueueGroupTreeItem(
 			this as unknown as AzExtParentTreeItem &
 				ResolvedAppResourceTreeItem<ResolvedStorageAccount>,
 		);
+
 		this._tableGroupTreeItem = new TableGroupTreeItem(
 			this as unknown as AzExtParentTreeItem &
 				ResolvedAppResourceTreeItem<ResolvedStorageAccount>,
@@ -219,6 +235,7 @@ export class StorageAccountTreeItem
 		});
 
 		await wizard.prompt();
+
 		await wizard.execute();
 	}
 
@@ -257,6 +274,7 @@ export class StorageAccountTreeItem
 						await this._subscription.createCredentialsForScopes([
 							"https://storage.azure.com/.default",
 						]);
+
 					client = new BlobServiceClient(
 						nonNullProp(
 							this.storageAccount.primaryEndpoints,
@@ -264,6 +282,7 @@ export class StorageAccountTreeItem
 						),
 						token,
 					);
+
 					await client.getProperties(); // Trigger a request to validate the token
 				}
 
@@ -287,6 +306,7 @@ export class StorageAccountTreeItem
 						await this._subscription.createCredentialsForScopes([
 							"https://storage.azure.com/.default",
 						]);
+
 					client = new ShareServiceClient(
 						nonNullProp(
 							this.storageAccount.primaryEndpoints,
@@ -295,6 +315,7 @@ export class StorageAccountTreeItem
 						token,
 						{ fileRequestIntent: "backup" },
 					);
+
 					await client.getProperties(); // Trigger a request to validate the token
 				}
 
@@ -318,6 +339,7 @@ export class StorageAccountTreeItem
 						await this._subscription.createCredentialsForScopes([
 							"https://storage.azure.com/.default",
 						]);
+
 					client = new QueueServiceClient(
 						nonNullProp(
 							this.storageAccount.primaryEndpoints,
@@ -325,6 +347,7 @@ export class StorageAccountTreeItem
 						),
 						token,
 					);
+
 					await client.getProperties(); // Trigger a request to validate the token
 				}
 
@@ -348,6 +371,7 @@ export class StorageAccountTreeItem
 						await this._subscription.createCredentialsForScopes([
 							"https://storage.azure.com/.default",
 						]);
+
 					client = new TableServiceClient(
 						nonNullProp(
 							this.storageAccount.primaryEndpoints,
@@ -355,6 +379,7 @@ export class StorageAccountTreeItem
 						),
 						token,
 					);
+
 					await client.getProperties(); // Trigger a request to validate the token
 				}
 
@@ -474,6 +499,7 @@ export class StorageAccountTreeItem
 	): Promise<void> {
 		const serviceClient: BlobServiceClient =
 			await this.root.createBlobServiceClient();
+
 		await serviceClient.setProperties(properties);
 	}
 
@@ -502,6 +528,7 @@ export class StorageAccountTreeItem
 			<IStaticWebsiteConfigWizardContext>context,
 			this,
 		);
+
 		wizardContext.enableStaticWebsite = true;
 
 		const wizard: AzureWizard<IStaticWebsiteConfigWizardContext> =
@@ -520,12 +547,15 @@ export class StorageAccountTreeItem
 					"Configure static website",
 				),
 			});
+
 		await wizard.prompt();
+
 		await wizard.execute();
 	}
 
 	public async disableStaticWebsite(context: IActionContext): Promise<void> {
 		const websiteHostingStatus = await this.getActualWebsiteHostingStatus();
+
 		await this.ensureHostingCapable(context, websiteHostingStatus);
 
 		if (!websiteHostingStatus.enabled) {
@@ -535,6 +565,7 @@ export class StorageAccountTreeItem
 
 			return;
 		}
+
 		const disableMessage: MessageItem = { title: "Disable" };
 
 		const confirmDisable: MessageItem = await context.ui.showWarningMessage(
@@ -546,10 +577,13 @@ export class StorageAccountTreeItem
 
 		if (confirmDisable === disableMessage) {
 			const props = { staticWebsite: { enabled: false } };
+
 			await this.setWebsiteHostingProperties(props);
+
 			void window.showInformationMessage(
 				`Static website hosting has been disabled for account ${this.label}.`,
 			);
+
 			await ext.rgApi.appResourceTree.refresh(
 				context,
 				this as unknown as AzExtTreeItem,
@@ -563,6 +597,7 @@ export class StorageAccountTreeItem
 		};
 
 		const hostingStatus = await this.getActualWebsiteHostingStatus();
+
 		await this.ensureHostingCapable(context, hostingStatus);
 
 		if (!hostingStatus.enabled) {
@@ -577,6 +612,7 @@ export class StorageAccountTreeItem
 					this,
 				);
 			}
+
 			throw new UserCancelledError(msg);
 		}
 
@@ -591,6 +627,7 @@ export class StorageAccountTreeItem
 					this,
 				);
 			}
+
 			throw new UserCancelledError(msg);
 		}
 
@@ -618,6 +655,7 @@ export class StorageAccountTreeItem
 			} catch (error) {
 				// Ignore errors
 			}
+
 			if (accountType !== "StorageV2") {
 				context.errorHandling.suppressReportIssue = true;
 

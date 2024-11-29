@@ -18,6 +18,7 @@ export function registerDirectoryActionHandlers(): void {
 		"azureStorage.deleteDirectory",
 		deleteFilesAndDirectories,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.createSubdirectory",
 		async (context: IActionContext, treeItem: AzExtParentTreeItem) =>

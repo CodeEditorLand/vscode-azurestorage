@@ -44,6 +44,7 @@ export function getResourcesPath(): string {
 
 export type NotificationProgress = Progress<{
 	message?: string | undefined;
+
 	increment?: number | undefined;
 }>;
 

@@ -25,6 +25,7 @@ export class QueueTreeItem extends AzExtTreeItem implements IStorageTreeItem {
 		public readonly queue: QueueItem,
 	) {
 		super(parent);
+
 		this.iconPath = {
 			light: path.join(getResourcesPath(), "light", "AzureQueue.svg"),
 			dark: path.join(getResourcesPath(), "dark", "AzureQueue.svg"),
@@ -36,7 +37,9 @@ export class QueueTreeItem extends AzExtTreeItem implements IStorageTreeItem {
 	}
 
 	public label: string = this.queue.name;
+
 	public static contextValue: string = "azureQueue";
+
 	public contextValue: string = QueueTreeItem.contextValue;
 
 	public async deleteTreeItemImpl(context: IActionContext): Promise<void> {
@@ -52,6 +55,7 @@ export class QueueTreeItem extends AzExtTreeItem implements IStorageTreeItem {
 		if (result === DialogResponses.deleteResponse) {
 			const queueServiceClient =
 				await this.root.createQueueServiceClient();
+
 			await queueServiceClient.deleteQueue(this.queue.name);
 		} else {
 			throw new UserCancelledError();

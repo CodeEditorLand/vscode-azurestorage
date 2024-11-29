@@ -35,9 +35,13 @@ export class QueueGroupTreeItem
 	private _continuationToken: string | undefined;
 
 	public label: string = "Queues";
+
 	public readonly childTypeLabel: string = "Queue";
+
 	public static contextValue: string = "azureQueueGroup";
+
 	public contextValue: string = QueueGroupTreeItem.contextValue;
+
 	public parent:
 		| (ResolvedAppResourceTreeItem<ResolvedStorageAccount> &
 				AzExtParentTreeItem)
@@ -50,6 +54,7 @@ export class QueueGroupTreeItem
 			| AttachedStorageAccountTreeItem,
 	) {
 		super(parent);
+
 		this.iconPath = {
 			light: path.join(getResourcesPath(), "light", "AzureQueue.svg"),
 			dark: path.join(getResourcesPath(), "dark", "AzureQueue.svg"),
@@ -140,10 +145,12 @@ export class QueueGroupTreeItem
 					),
 				);
 			}
+
 			return await window.withProgress(
 				{ location: ProgressLocation.Window },
 				async (progress) => {
 					context.showCreatingTreeItem(queueName);
+
 					progress.report({
 						message: `Azure Storage: Creating queue '${queueName}'`,
 					});
@@ -165,6 +172,7 @@ export class QueueGroupTreeItem
 
 	private async createQueue(name: string): Promise<QueueItem> {
 		const queueServiceClient = await this.root.createQueueServiceClient();
+
 		await queueServiceClient.createQueue(name);
 
 		const queuesResponse: ListQueuesSegmentResponse =
@@ -198,18 +206,23 @@ export class QueueGroupTreeItem
 		if (!name) {
 			return "Queue name cannot be empty";
 		}
+
 		if (name.indexOf(" ") >= 0) {
 			return "Queue name cannot contain spaces";
 		}
+
 		if (name.length < validLength.min || name.length > validLength.max) {
 			return `Queue name must contain between ${validLength.min} and ${validLength.max} characters`;
 		}
+
 		if (!/^[a-z0-9-]+$/.test(name)) {
 			return "Queue name can only contain lowercase letters, numbers and hyphens";
 		}
+
 		if (/--/.test(name)) {
 			return "Queue name cannot contain two hyphens in a row";
 		}
+
 		if (/(^-)|(-$)/.test(name)) {
 			return "Queue name cannot begin or end with a hyphen";
 		}

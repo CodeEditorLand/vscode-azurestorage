@@ -10,6 +10,7 @@ import { FileShareTreeItem } from "../../tree/fileShare/FileShareTreeItem";
 
 export interface IOpenInFileExplorerWizardContext extends IActionContext {
 	treeItem: BlobContainerTreeItem | FileShareTreeItem;
+
 	openBehavior?: OpenBehavior;
 }
 

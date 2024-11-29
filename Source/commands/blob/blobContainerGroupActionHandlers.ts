@@ -29,6 +29,7 @@ export async function createBlobContainer(
 	if (treeItem?.root.isEmulated && !(await isAzuriteInstalled())) {
 		warnAzuriteNotInstalled(context);
 	}
+
 	await createChildNode(
 		context,
 		BlobContainerGroupTreeItem.contextValue,

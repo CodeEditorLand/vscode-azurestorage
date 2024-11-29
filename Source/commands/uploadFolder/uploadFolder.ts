@@ -48,6 +48,7 @@ export async function uploadFolder(
 		wizardContext,
 		wizardOptions,
 	);
+
 	await wizard.prompt();
 
 	const nTreeItem: BlobContainerTreeItem | FileShareTreeItem = nonNullProp(
@@ -56,6 +57,7 @@ export async function uploadFolder(
 	);
 
 	const nUri: vscode.Uri = nonNullProp(wizardContext, "uri");
+
 	wizardContext.activityTitle = localize(
 		"activityLogUploadFolder",
 		'Upload "{0}" folder to "{1}"',

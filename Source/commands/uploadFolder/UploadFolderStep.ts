@@ -77,6 +77,7 @@ export class UploadFolderStep extends AzureWizardExecuteStep<IUploadFolderWizard
 					sourcePath,
 					context.treeItem.label,
 				);
+
 				await vscode.window.withProgress(
 					{
 						cancellable: true,
@@ -115,6 +116,7 @@ export class UploadFolderStep extends AzureWizardExecuteStep<IUploadFolderWizard
 		}
 
 		await refreshTreeItem(context, context.treeItem);
+
 		context.resolution = resolution;
 	}
 

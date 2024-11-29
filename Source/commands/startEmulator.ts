@@ -22,6 +22,7 @@ export async function startEmulator(
 	if (isAzuriteExtensionInstalled()) {
 		// Use the Azurite extension
 		await vscode.commands.executeCommand(`azurite.start_${emulatorType}`);
+
 		await ext.rgApi.workspaceResourceTree.refresh(
 			context,
 			ext.attachedStorageAccountsTreeItem,
@@ -35,7 +36,9 @@ export async function startEmulator(
 			undefined,
 			`azurite-${emulatorType}`,
 		);
+
 		ext.outputChannel.show();
+
 		await new Promise(
 			(
 				resolve: (value: unknown) => void,

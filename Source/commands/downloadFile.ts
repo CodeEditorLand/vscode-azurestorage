@@ -20,10 +20,15 @@ import { SasUrlPromptStep } from "./downloadFiles/SasUrlPromptStep";
 
 export interface IAzCopyDownload {
 	remoteFileName: string;
+
 	remoteFilePath: string;
+
 	localFilePath: string;
+
 	isDirectory: boolean;
+
 	resourceUri: string;
+
 	sasToken: string;
 }
 
@@ -59,6 +64,7 @@ export async function download(
 	);
 
 	await wizard.prompt();
+
 	await wizard.execute();
 }
 
@@ -72,5 +78,6 @@ export async function downloadTreeItems(
 	treeItems?: ITransferSrcOrDstTreeItem[],
 ): Promise<void> {
 	treeItems ??= [treeItem];
+
 	await download(context, treeItems);
 }

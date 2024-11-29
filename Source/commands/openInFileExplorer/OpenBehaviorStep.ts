@@ -40,6 +40,7 @@ export class OpenBehaviorStep extends AzureWizardPromptStep<IOpenInFileExplorerW
 			"selectOpenBehavior",
 			"Select how you would like to open this resource",
 		);
+
 		context.openBehavior = (
 			await context.ui.showQuickPick(picks, { placeHolder })
 		).data;

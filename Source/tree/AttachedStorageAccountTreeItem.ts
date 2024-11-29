@@ -48,14 +48,21 @@ export class AttachedStorageAccountTreeItem
 	implements IStorageTreeItem
 {
 	public childTypeLabel: string = "resource type";
+
 	public autoSelectInTreeItemPicker: boolean = true;
+
 	public static baseContextValue: string = `${StorageAccountTreeItem.contextValue}-attached`;
+
 	public static emulatedContextValue: string = `${AttachedStorageAccountTreeItem.baseContextValue}-emulated`;
 
 	private readonly _blobContainerGroupTreeItem: BlobContainerGroupTreeItem;
+
 	private readonly _fileShareGroupTreeItem: FileShareGroupTreeItem;
+
 	private readonly _queueGroupTreeItem: QueueGroupTreeItem;
+
 	private readonly _tableGroupTreeItem: TableGroupTreeItem;
+
 	private _root: IStorageRoot;
 
 	constructor(
@@ -66,6 +73,7 @@ export class AttachedStorageAccountTreeItem
 		super(parent);
 
 		this.id = this.storageAccountName;
+
 		this.iconPath = {
 			light: path.join(
 				getResourcesPath(),
@@ -84,9 +92,13 @@ export class AttachedStorageAccountTreeItem
 			storageAccountName,
 			this.storageAccountName === emulatorAccountName,
 		);
+
 		this._blobContainerGroupTreeItem = new BlobContainerGroupTreeItem(this);
+
 		this._fileShareGroupTreeItem = new FileShareGroupTreeItem(this);
+
 		this._queueGroupTreeItem = new QueueGroupTreeItem(this);
+
 		this._tableGroupTreeItem = new TableGroupTreeItem(this);
 	}
 
@@ -159,11 +171,13 @@ export class AttachedStorageAccountTreeItem
 
 class AttachedStorageRoot extends AttachedAccountRoot {
 	public storageAccountName: string;
+
 	public isEmulated: boolean;
 
 	private readonly _serviceClientPipelineOptions = {
 		retryOptions: { maxTries: 2 },
 	};
+
 	private _connectionString: string;
 
 	constructor(
@@ -172,8 +186,11 @@ class AttachedStorageRoot extends AttachedAccountRoot {
 		isEmulated: boolean,
 	) {
 		super();
+
 		this._connectionString = connectionString;
+
 		this.storageAccountName = storageAccountName;
+
 		this.isEmulated = isEmulated;
 	}
 
@@ -205,6 +222,7 @@ class AttachedStorageRoot extends AttachedAccountRoot {
 				),
 			);
 		}
+
 		return generateAccountSASQueryParameters(
 			accountSASSignatureValues,
 			new StorageSharedKeyCredential(this.storageAccountName, key),

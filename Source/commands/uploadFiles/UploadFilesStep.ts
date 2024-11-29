@@ -70,6 +70,7 @@ export class UploadFilesStep extends AzureWizardExecuteStep<IUploadFilesWizardCo
 				) {
 					// Don't allow directories to sneak in https://github.com/microsoft/vscode-azurestorage/issues/803
 					urisToUpload.push(uri);
+
 					fileEndings.push(destPath);
 				}
 			}
@@ -122,7 +123,9 @@ export class UploadFilesStep extends AzureWizardExecuteStep<IUploadFilesWizardCo
 					fileEndings,
 				);
 			}
+
 			await refreshTreeItem(context, context.treeItem);
+
 			context.resolution = resolution;
 		}
 	}

@@ -7,5 +7,6 @@
 
 export interface ICopyUrl {
 	getUrl?(): string;
+
 	copyUrl(): void;
 }

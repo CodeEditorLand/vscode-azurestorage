@@ -11,10 +11,12 @@ import { IStaticWebsiteConfigWizardContext } from "./IStaticWebsiteConfigWizardC
 
 export class StaticWebsiteErrorDocument404Step extends AzureWizardPromptStep<IStaticWebsiteConfigWizardContext> {
 	static readonly defaultErrorDocument404Path: string = "index.html";
+
 	private oldErrorDocument404Path: string | undefined;
 
 	public constructor(oldErrorDocument404Path?: string) {
 		super();
+
 		this.oldErrorDocument404Path = oldErrorDocument404Path;
 	}
 

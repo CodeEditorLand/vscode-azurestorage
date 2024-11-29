@@ -47,7 +47,9 @@ export class BlobDirectoryTreeItem
 	implements ICopyUrl, ITransferSrcOrDstTreeItem
 {
 	public static contextValue: string = "azureBlobDirectory";
+
 	public contextValue: string = BlobDirectoryTreeItem.contextValue;
+
 	public parent: BlobContainerTreeItem | BlobDirectoryTreeItem;
 
 	/**
@@ -75,6 +77,7 @@ export class BlobDirectoryTreeItem
 		}
 
 		this.dirPath = dirPath;
+
 		this.dirName = path.basename(dirPath);
 	}
 
@@ -120,6 +123,7 @@ export class BlobDirectoryTreeItem
 			this,
 			this._continuationToken,
 		);
+
 		this._continuationToken = continuationToken;
 
 		return children;
@@ -140,6 +144,7 @@ export class BlobDirectoryTreeItem
 				this.resourceUri,
 			);
 		}
+
 		AzureStorageFS.fireCreateEvent(child);
 
 		return child;
@@ -153,6 +158,7 @@ export class BlobDirectoryTreeItem
 		);
 
 		const url = blobClient.url;
+
 		await copyAndShowToast(url, "Blob Directory URL");
 	}
 
@@ -189,6 +195,7 @@ export class BlobDirectoryTreeItem
 		if (!context.suppressMessage) {
 			await wizard.prompt();
 		}
+
 		await wizard.execute();
 
 		AzureStorageFS.fireDeleteEvent(this);

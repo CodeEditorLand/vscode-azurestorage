@@ -44,7 +44,9 @@ export class BlobTreeItem
 	implements ICopyUrl, ITransferSrcOrDstTreeItem
 {
 	public static contextValue: string = "azureBlobFile";
+
 	public contextValue: string = BlobTreeItem.contextValue;
+
 	public parent: BlobContainerTreeItem | BlobDirectoryTreeItem;
 
 	/**
@@ -64,8 +66,11 @@ export class BlobTreeItem
 		public readonly resourceUri: string,
 	) {
 		super(parent);
+
 		this.commandId = "azureStorage.editBlob";
+
 		this.blobPath = blobPath;
+
 		this.blobName = path.basename(blobPath);
 	}
 
@@ -105,6 +110,7 @@ export class BlobTreeItem
 		);
 
 		const url = blobClient.url;
+
 		await copyAndShowToast(url, "Blob URL");
 	}
 
@@ -139,7 +145,9 @@ export class BlobTreeItem
 				promptSteps: [new DeleteConfirmationStep(message)],
 				executeSteps: [new DeleteBlobStep()],
 			});
+
 			await wizard.prompt();
+
 			await wizard.execute();
 		} else {
 			const blobClient: BlobClient = await createBlobClient(
@@ -147,8 +155,10 @@ export class BlobTreeItem
 				this.container.name,
 				this.blobPath,
 			);
+
 			await blobClient.delete();
 		}
+
 		AzureStorageFS.fireDeleteEvent(this);
 	}
 
@@ -160,6 +170,7 @@ export class BlobTreeItem
 		);
 
 		const props: BlobGetPropertiesResponse = await client.getProperties();
+
 		context.telemetry.measurements.blobDownloadSize = props.contentLength;
 
 		if (
@@ -174,6 +185,7 @@ export class BlobTreeItem
 				storageExplorerDownloadUrl,
 				props.blobType,
 			);
+
 			askOpenInStorageExplorer(
 				context,
 				message,

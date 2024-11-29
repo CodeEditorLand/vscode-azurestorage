@@ -35,7 +35,9 @@ export function warnAzuriteNotInstalled(context: IActionContext): void {
 			"You must install the [Azurite extension](command:azureStorage.showAzuriteExtension) to perform this operation.",
 		),
 	);
+
 	context.telemetry.properties.cancelStep = "installAzuriteExtension";
+
 	context.errorHandling.suppressDisplay = true;
 
 	throw new Error(`"${azuriteExtensionId}" extension is not installed.`);

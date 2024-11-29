@@ -28,6 +28,7 @@ export class GetAzCopyDownloadsStep extends AzureWizardExecuteStep<IDownloadWiza
 		_progress: NotificationProgress,
 	): Promise<void> {
 		const destinationFolder = nonNullProp(context, "destinationFolder");
+
 		context.sasUrl
 			? await this.setDownloadItemsFromContextSasUrl(
 					context,
@@ -65,6 +66,7 @@ export class GetAzCopyDownloadsStep extends AzureWizardExecuteStep<IDownloadWiza
 
 			if (treeItem instanceof BlobTreeItem) {
 				await treeItem.checkCanDownload(context);
+
 				allFileDownloads.push({
 					type: "blob",
 					remoteFileName: treeItem.blobName,
@@ -134,6 +136,7 @@ export class GetAzCopyDownloadsStep extends AzureWizardExecuteStep<IDownloadWiza
 		}
 
 		context.allFileDownloads = allFileDownloads;
+
 		context.allFolderDownloads = allFolderDownloads;
 	}
 
@@ -148,6 +151,7 @@ export class GetAzCopyDownloadsStep extends AzureWizardExecuteStep<IDownloadWiza
 		const url = new URL(nonNullProp(context, "sasUrl"));
 
 		const pathArgs = url.pathname.split("/");
+
 		pathArgs.shift();
 
 		const resourceName = pathArgs.shift();
@@ -167,6 +171,7 @@ export class GetAzCopyDownloadsStep extends AzureWizardExecuteStep<IDownloadWiza
 			: allFileDownloads.push(download);
 
 		context.allFileDownloads = allFileDownloads;
+
 		context.allFolderDownloads = allFolderDownloads;
 	}
 }

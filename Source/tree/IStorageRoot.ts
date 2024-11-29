@@ -17,16 +17,24 @@ import type { QueueServiceClient } from "@azure/storage-queue";
 
 export interface IStorageRoot {
 	storageAccountName: string;
+
 	storageAccountId: string;
+
 	isEmulated: boolean;
+
 	primaryEndpoints?: Endpoints;
+
 	generateSasToken(
 		accountSASSignatureValues:
 			| AccountSASSignatureValuesBlob
 			| AccountSASSignatureValuesFileShare,
 	): string;
+
 	createBlobServiceClient(): Promise<BlobServiceClient>;
+
 	createShareServiceClient(): Promise<ShareServiceClient>;
+
 	createQueueServiceClient(): Promise<QueueServiceClient>;
+
 	createTableServiceClient(): Promise<TableServiceClient>;
 }

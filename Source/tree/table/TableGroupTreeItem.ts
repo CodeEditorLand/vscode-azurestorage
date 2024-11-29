@@ -32,9 +32,13 @@ export class TableGroupTreeItem
 	private _continuationToken: string | undefined;
 
 	public label: string = "Tables";
+
 	public readonly childTypeLabel: string = "Table";
+
 	public static contextValue: string = "azureTableGroup";
+
 	public contextValue: string = TableGroupTreeItem.contextValue;
+
 	public declare parent:
 		| (ResolvedAppResourceTreeItem<ResolvedStorageAccount> &
 				AzExtParentTreeItem)
@@ -47,6 +51,7 @@ export class TableGroupTreeItem
 			| AttachedStorageAccountTreeItem,
 	) {
 		super(parent);
+
 		this.iconPath = {
 			light: path.join(getResourcesPath(), "light", "AzureTable.svg"),
 			dark: path.join(getResourcesPath(), "dark", "AzureTable.svg"),
@@ -135,10 +140,12 @@ export class TableGroupTreeItem
 					),
 				);
 			}
+
 			return await window.withProgress(
 				{ location: ProgressLocation.Window },
 				async (progress) => {
 					context.showCreatingTreeItem(tableName);
+
 					progress.report({
 						message: `Azure Storage: Creating table '${tableName}'`,
 					});
@@ -159,6 +166,7 @@ export class TableGroupTreeItem
 
 	private async createTable(name: string): Promise<TableItem> {
 		const tableServiceClient = await this.root.createTableServiceClient();
+
 		await tableServiceClient.createTable(name);
 
 		const tablesResponse = await this.listTables();
@@ -186,15 +194,19 @@ export class TableGroupTreeItem
 		if (!name) {
 			return "Table name cannot be empty";
 		}
+
 		if (name.indexOf(" ") >= 0) {
 			return "Table name cannot contain spaces";
 		}
+
 		if (name.length < validLength.min || name.length > validLength.max) {
 			return `Table name must contain between ${validLength.min} and ${validLength.max} characters`;
 		}
+
 		if (!/^[a-zA-Z0-9]+$/.test(name)) {
 			return "Table name can only contain letters and digits";
 		}
+
 		if (/(^[0-9])/.test(name)) {
 			return "Table name cannot begin with a digit";
 		}

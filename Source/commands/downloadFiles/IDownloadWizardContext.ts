@@ -15,9 +15,12 @@ export interface IDownloadWizardContext
 	extends IActionContext,
 		ExecuteActivityContext {
 	destinationFolder?: string;
+
 	sasUrl?: string;
+
 	treeItems?: ITransferSrcOrDstTreeItem[];
 
 	allFileDownloads?: DownloadItem[];
+
 	allFolderDownloads?: DownloadItem[];
 }

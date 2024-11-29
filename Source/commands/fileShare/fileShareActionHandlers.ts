@@ -23,16 +23,19 @@ export function registerFileShareActionHandlers(): void {
 		"azureStorage.openFileShare",
 		openFileShareInStorageExplorer,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.editFile",
 		async (context: IActionContext, treeItem: FileTreeItem) =>
 			AzureStorageFS.showEditor(context, treeItem),
 		250,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.deleteFileShare",
 		deleteFileShare,
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.createDirectory",
 		async (context: IActionContext, treeItem: FileShareTreeItem) =>
@@ -41,12 +44,14 @@ export function registerFileShareActionHandlers(): void {
 				childType: DirectoryTreeItem.contextValue,
 			}),
 	);
+
 	registerCommandWithTreeNodeUnwrapping(
 		"azureStorage.createFile",
 		async (context: IActionContext, treeItem: FileShareTreeItem) => {
 			const childTreeItem = await treeItem.createChild(<
 				IFileShareCreateChildContext
 			>{ ...context, childType: FileTreeItem.contextValue });
+
 			await vscode.commands.executeCommand(
 				"azureStorage.editFile",
 				childTreeItem,
