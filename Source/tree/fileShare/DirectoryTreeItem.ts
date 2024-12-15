@@ -3,136 +3,221 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import type { AccountSASSignatureValues, DirectoryItem, FileItem, ShareDirectoryClient } from '@azure/storage-file-share';
+import * as path from "path";
+import { posix } from "path";
+import {
+	AccountSASPermissions,
+	type AccountSASSignatureValues,
+	type DirectoryItem,
+	type FileItem,
+	type ShareDirectoryClient,
+} from "@azure/storage-file-share";
+import {
+	AzExtParentTreeItem,
+	AzExtTreeItem,
+	DialogResponses,
+	IActionContext,
+	ICreateChildImplContext,
+	TreeItemIconPath,
+	UserCancelledError,
+} from "@microsoft/vscode-azext-utils";
+import * as vscode from "vscode";
+import { MessageItem, window } from "vscode";
 
-import { polyfill } from '../../polyfill.worker';
+import { AzureStorageFS } from "../../AzureStorageFS";
+import { threeDaysInMS } from "../../constants";
+import { ext } from "../../extensionVariables";
+import { polyfill } from "../../polyfill.worker";
+import { copyAndShowToast } from "../../utils/copyAndShowToast";
+import {
+	askAndCreateChildDirectory,
+	deleteDirectoryAndContents,
+	listFilesInDirectory,
+} from "../../utils/directoryUtils";
+import {
+	askAndCreateEmptyTextFile,
+	createDirectoryClient,
+} from "../../utils/fileUtils";
+import { ICopyUrl } from "../ICopyUrl";
+import { IStorageRoot } from "../IStorageRoot";
+import { ITransferSrcOrDstTreeItem } from "../ITransferSrcOrDstTreeItem";
+import {
+	FileShareTreeItem,
+	IFileShareCreateChildContext,
+} from "./FileShareTreeItem";
+import { FileTreeItem } from "./FileTreeItem";
+
 polyfill();
 
-import { AccountSASPermissions } from '@azure/storage-file-share';
+export class DirectoryTreeItem
+	extends AzExtParentTreeItem
+	implements ICopyUrl, ITransferSrcOrDstTreeItem
+{
+	public parent: FileShareTreeItem | DirectoryTreeItem;
+	constructor(
+		parent: FileShareTreeItem | DirectoryTreeItem,
+		public readonly parentPath: string,
+		public readonly directoryName: string, // directoryName should not include parent path
+		public readonly shareName: string,
+		public readonly resourceUri: string,
+	) {
+		super(parent);
+	}
 
-import { AzExtParentTreeItem, AzExtTreeItem, DialogResponses, IActionContext, ICreateChildImplContext, TreeItemIconPath, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import * as path from 'path';
-import { posix } from 'path';
-import * as vscode from 'vscode';
-import { MessageItem, window } from 'vscode';
-import { AzureStorageFS } from "../../AzureStorageFS";
-import { threeDaysInMS } from '../../constants';
-import { ext } from "../../extensionVariables";
-import { copyAndShowToast } from '../../utils/copyAndShowToast';
-import { askAndCreateChildDirectory, deleteDirectoryAndContents, listFilesInDirectory } from '../../utils/directoryUtils';
-import { askAndCreateEmptyTextFile, createDirectoryClient } from '../../utils/fileUtils';
-import { ICopyUrl } from '../ICopyUrl';
-import { IStorageRoot } from '../IStorageRoot';
-import { ITransferSrcOrDstTreeItem } from '../ITransferSrcOrDstTreeItem';
-import { FileShareTreeItem, IFileShareCreateChildContext } from "./FileShareTreeItem";
-import { FileTreeItem } from './FileTreeItem';
+	private _continuationToken: string | undefined;
+	public label: string = this.directoryName;
+	public static contextValue: string = "azureFileShareDirectory";
+	public contextValue: string = DirectoryTreeItem.contextValue;
 
-export class DirectoryTreeItem extends AzExtParentTreeItem implements ICopyUrl, ITransferSrcOrDstTreeItem {
-    public parent: FileShareTreeItem | DirectoryTreeItem;
-    constructor(
-        parent: FileShareTreeItem | DirectoryTreeItem,
-        public readonly parentPath: string,
-        public readonly directoryName: string, // directoryName should not include parent path
-        public readonly shareName: string,
-        public readonly resourceUri: string) {
-        super(parent);
-    }
+	public get root(): IStorageRoot {
+		return this.parent.root;
+	}
 
-    private _continuationToken: string | undefined;
-    public label: string = this.directoryName;
-    public static contextValue: string = 'azureFileShareDirectory';
-    public contextValue: string = DirectoryTreeItem.contextValue;
+	public get remoteFilePath(): string {
+		return posix.join(this.parentPath, this.directoryName, "/");
+	}
 
-    public get root(): IStorageRoot {
-        return this.parent.root;
-    }
+	public get iconPath(): TreeItemIconPath {
+		return new vscode.ThemeIcon("folder");
+	}
 
-    public get remoteFilePath(): string {
-        return posix.join(this.parentPath, this.directoryName, '/');
-    }
+	private get fullPath(): string {
+		return path.posix.join(this.parentPath, this.directoryName);
+	}
 
-    public get iconPath(): TreeItemIconPath {
-        return new vscode.ThemeIcon('folder');
-    }
+	public get transferSasToken(): string {
+		const accountSASSignatureValues: AccountSASSignatureValues = {
+			expiresOn: new Date(Date.now() + threeDaysInMS),
+			permissions: AccountSASPermissions.parse("rwl"), // read, write, list
+			services: "f", // file
+			resourceTypes: "co", // container, object
+		};
+		return this.root.generateSasToken(accountSASSignatureValues);
+	}
 
-    private get fullPath(): string {
-        return path.posix.join(this.parentPath, this.directoryName);
-    }
+	hasMoreChildrenImpl(): boolean {
+		return !!this._continuationToken;
+	}
 
-    public get transferSasToken(): string {
-        const accountSASSignatureValues: AccountSASSignatureValues = {
-            expiresOn: new Date(Date.now() + threeDaysInMS),
-            permissions: AccountSASPermissions.parse("rwl"), // read, write, list
-            services: 'f', // file
-            resourceTypes: 'co' // container, object
-        };
-        return this.root.generateSasToken(accountSASSignatureValues);
-    }
+	async loadMoreChildrenImpl(
+		clearCache: boolean,
+	): Promise<(DirectoryTreeItem | FileTreeItem)[]> {
+		if (clearCache) {
+			this._continuationToken = undefined;
+		}
 
-    hasMoreChildrenImpl(): boolean {
-        return !!this._continuationToken;
-    }
+		const {
+			files,
+			directories,
+			continuationToken,
+		}: {
+			files: FileItem[];
+			directories: DirectoryItem[];
+			continuationToken: string;
+		} = await listFilesInDirectory(
+			this.fullPath,
+			this.shareName,
+			this.root,
+			this._continuationToken,
+		);
+		this._continuationToken = continuationToken;
 
-    async loadMoreChildrenImpl(clearCache: boolean): Promise<(DirectoryTreeItem | FileTreeItem)[]> {
-        if (clearCache) {
-            this._continuationToken = undefined;
-        }
+		const fileTreeItems: FileTreeItem[] = await Promise.all(
+			files.map(async (file: FileItem) => {
+				return new FileTreeItem(
+					this,
+					file.name,
+					this.fullPath,
+					this.shareName,
+					this.resourceUri,
+				);
+			}),
+		);
 
-        const { files, directories, continuationToken }: { files: FileItem[]; directories: DirectoryItem[]; continuationToken: string; } = await listFilesInDirectory(this.fullPath, this.shareName, this.root, this._continuationToken);
-        this._continuationToken = continuationToken;
+		const directoryTreeItems: DirectoryTreeItem[] = await Promise.all(
+			directories.map(async (directory: DirectoryItem) => {
+				return new DirectoryTreeItem(
+					this,
+					this.fullPath,
+					directory.name,
+					this.shareName,
+					this.resourceUri,
+				);
+			}),
+		);
 
-        const fileTreeItems: FileTreeItem[] = await Promise.all(files.map(async (file: FileItem) => {
-            return new FileTreeItem(this, file.name, this.fullPath, this.shareName, this.resourceUri);
-        }));
+		return (<(DirectoryTreeItem | FileTreeItem)[]>[])
+			.concat(fileTreeItems)
+			.concat(directoryTreeItems);
+	}
 
-        const directoryTreeItems: DirectoryTreeItem[] = await Promise.all(directories.map(async (directory: DirectoryItem) => {
-            return new DirectoryTreeItem(this, this.fullPath, directory.name, this.shareName, this.resourceUri);
-        }));
+	public async copyUrl(): Promise<void> {
+		// Use this.fullPath here instead of this.directoryName. Otherwise only the leaf directory is displayed in the URL
+		const directoryClient: ShareDirectoryClient =
+			await createDirectoryClient(
+				this.root,
+				this.shareName,
+				this.fullPath,
+			);
+		const url = directoryClient.url;
+		await copyAndShowToast(url, "Directory URL");
+	}
 
-        return (<(DirectoryTreeItem | FileTreeItem)[]>[])
-            .concat(fileTreeItems)
-            .concat(directoryTreeItems);
-    }
+	public async createChildImpl(
+		context: ICreateChildImplContext & IFileShareCreateChildContext,
+	): Promise<AzExtTreeItem> {
+		let child: AzExtTreeItem;
+		if (context.childType === FileTreeItem.contextValue) {
+			child = await askAndCreateEmptyTextFile(
+				this,
+				this.fullPath,
+				this.shareName,
+				context,
+			);
+		} else {
+			child = await askAndCreateChildDirectory(
+				this,
+				this.fullPath,
+				this.shareName,
+				context,
+			);
+		}
+		AzureStorageFS.fireCreateEvent(child);
+		return child;
+	}
 
-    public async copyUrl(): Promise<void> {
-        // Use this.fullPath here instead of this.directoryName. Otherwise only the leaf directory is displayed in the URL
-        const directoryClient: ShareDirectoryClient = await createDirectoryClient(this.root, this.shareName, this.fullPath);
-        const url = directoryClient.url;
-        await copyAndShowToast(url, 'Directory URL');
-    }
+	public async deleteTreeItemImpl(
+		context: IActionContext & IDirectoryDeleteContext,
+	): Promise<void> {
+		let result: MessageItem | undefined;
+		if (!context.suppressMessage) {
+			// Note: Azure will fail the directory delete if it's not empty, so no need to ask about deleting contents
+			const message: string = `Are you sure you want to delete the directory '${this.label}' and all of its files and subdirectories?`;
+			result = await window.showWarningMessage(
+				message,
+				{ modal: true },
+				DialogResponses.deleteResponse,
+				DialogResponses.cancel,
+			);
+		} else {
+			result = DialogResponses.deleteResponse;
+		}
 
-    public async createChildImpl(context: ICreateChildImplContext & IFileShareCreateChildContext): Promise<AzExtTreeItem> {
-        let child: AzExtTreeItem;
-        if (context.childType === FileTreeItem.contextValue) {
-            child = await askAndCreateEmptyTextFile(this, this.fullPath, this.shareName, context);
-        } else {
-            child = await askAndCreateChildDirectory(this, this.fullPath, this.shareName, context);
-        }
-        AzureStorageFS.fireCreateEvent(child);
-        return child;
-    }
+		if (result === DialogResponses.deleteResponse) {
+			ext.outputChannel.show();
+			await deleteDirectoryAndContents(
+				this.fullPath,
+				this.shareName,
+				this.root,
+			);
+		} else {
+			throw new UserCancelledError();
+		}
 
-    public async deleteTreeItemImpl(context: IActionContext & IDirectoryDeleteContext): Promise<void> {
-        let result: MessageItem | undefined;
-        if (!context.suppressMessage) {
-            // Note: Azure will fail the directory delete if it's not empty, so no need to ask about deleting contents
-            const message: string = `Are you sure you want to delete the directory '${this.label}' and all of its files and subdirectories?`;
-            result = await window.showWarningMessage(message, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
-        } else {
-            result = DialogResponses.deleteResponse;
-        }
-
-        if (result === DialogResponses.deleteResponse) {
-            ext.outputChannel.show();
-            await deleteDirectoryAndContents(this.fullPath, this.shareName, this.root);
-        } else {
-            throw new UserCancelledError();
-        }
-
-        AzureStorageFS.fireDeleteEvent(this);
-    }
+		AzureStorageFS.fireDeleteEvent(this);
+	}
 }
 
 export interface IDirectoryDeleteContext extends IActionContext {
-    suppressMessage?: boolean;
+	suppressMessage?: boolean;
 }

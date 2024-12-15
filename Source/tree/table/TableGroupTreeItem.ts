@@ -39,7 +39,7 @@ export class TableGroupTreeItem
 
 	public contextValue: string = TableGroupTreeItem.contextValue;
 
-	public declare parent:
+	declare public parent:
 		| (ResolvedAppResourceTreeItem<ResolvedStorageAccount> &
 				AzExtParentTreeItem)
 		| AttachedStorageAccountTreeItem;
