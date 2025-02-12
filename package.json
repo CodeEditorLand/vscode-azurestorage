@@ -763,19 +763,19 @@
 		"onView:azureWorkspace"
 	],
 	"dependencies": {
-		"glob": "^11.0.1",
-		"jsdom": "^26.0.0",
-		"mime": "^4.0.6",
-		"open": "^10.1.0",
-		"p-retry": "^6.2.1",
-		"winreg": "^1.2.5"
+		"glob": "11.0.1",
+		"jsdom": "26.0.0",
+		"mime": "4.0.6",
+		"open": "10.1.0",
+		"p-retry": "6.2.1",
+		"winreg": "1.2.5"
 	},
 	"devDependencies": {
-		"@types/fs-extra": "^11.0.4",
-		"@types/jsdom": "^21.1.7",
-		"@types/mime": "^4.0.0",
-		"@types/node": "^22.13.1",
-		"@types/p-retry": "^3.0.1",
+		"@types/fs-extra": "11.0.4",
+		"@types/jsdom": "21.1.7",
+		"@types/mime": "4.0.0",
+		"@types/node": "22.13.1",
+		"@types/p-retry": "3.0.1",
 		"@types/winreg": "1.2.36"
 	},
 	"extensionDependencies": [
