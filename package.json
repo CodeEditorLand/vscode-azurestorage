@@ -1,5 +1,5 @@
 {
-	"name": "vscode-azurestorage",
+	"name": "@codeeditorland/azurestorage",
 	"displayName": "Azure Storage",
 	"description": "Manage your Azure Storage accounts including Blob Containers, File Shares, Tables and Queues",
 	"main": "main",
